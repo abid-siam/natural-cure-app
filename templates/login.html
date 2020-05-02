@@ -1,0 +1,49 @@
+<!-- ++++++++++++++++++++++++++++++++++++++++
+                   LOGIN PAGE
+     ++++++++++++++++++++++++++++++++++++++++ -->
+
+{% extends "layout.html" %} <!-- this is like an #include statement which brings copies the code from the specified file  -->
+{% block content %}
+    <div class ="content-section" id="loginform">
+        <form method="POST" action="/login"> <!-- Make a request to the same page  -->
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend style="text-align: center;" class="border bottom mb-4">Log In</legend>
+                <div class="form-group">
+                    {{ form.username.label(class="form-control-label")}}
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                <span> {{ error }} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control form-control-lg")}} <!-- input field is valid -->
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label(class="form-control-label")}}
+                    {% if form.password.errors %}
+                        {{ form.password(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                <span> {{ error }} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.password(class="form-control form-control-lg")}} <!-- input field is valid -->
+                    {% endif %}
+                </div>
+
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+            <small class="text-muted">Don't Have An Account?<a class="ml-2" href="{{url_for('register')}}">Register Here</a>
+            </small>
+        </form>
+    </div>
+{% endblock content %}
+
+

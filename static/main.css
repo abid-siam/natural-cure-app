@@ -1,0 +1,247 @@
+/*Header template adapted from youtube.com/coreyschafer*/
+
+body {
+  background: #fafafa;
+  color: #333333;
+  margin-top: 5rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #444444;
+}
+
+.bg-steel {
+  background-color: #5f788a;
+
+}
+
+p{
+  display: inline;
+}
+
+/*h2 {
+  font: 400 100px/1.5 'Pacifico', Helvetica, sans-serif;
+  color: #2b2b2b;
+  text-shadow: 3px 3px 0px rgba(0,0,0,0.1), 7px 7px 0px rgba(0,0,0,0.05);
+}
+*/
+.site-header .navbar-nav .nav-link {
+  color: #cbd5db;
+}
+
+.site-header .navbar-nav .nav-link:hover {
+  color: #ffffff;
+}
+
+.site-header .navbar-nav .nav-link.active {
+  font-weight: 100;
+}
+.content-section#post-holder{
+  float:left;
+  max-width: 500px;
+  min-width: 300px;
+  height: 400px;
+  width: 60%;
+  background: #ffffff;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 20px;
+  margin-left: 240px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content-section#about-page{
+  max-width: 800px;
+  min-width: 400px;
+  background: #ffffff;
+  padding: 10px 20px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 20px;
+  margin-top: 40px;
+}
+
+.content-section{
+  background: #ffffff;
+  border: 1px solid #dddddd;
+  padding: 10px 20px;
+  border-radius: 3px;
+  margin-bottom: 20px;
+  margin: 60px auto;
+  max-width: 600px;
+  width: 100%;
+}
+.content-section#groups-pg{
+  background: #ffffff;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  margin: 60px auto;
+  max-width: 400px;
+  text-align: center;
+
+}
+
+.content-section#main-user-info{
+  max-width: 500px;
+  min-width: 300px;
+  margin: 40px auto;
+  width: 100%;
+}
+
+.content-section#image-content{
+  float: left;
+  max-width: 500px;
+  min-width: 300px;
+  width: 60%;
+  background: #ffffff;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 20px;
+  margin-left: 240px;
+}
+
+.content-section#registerform{
+  max-width: 500px;
+  min-width: 300px;
+  margin: 40px auto;
+  width: 50%;
+}
+.content-section#loginform{
+  max-width: 500px;
+  min-width: 300px;
+  margin: 40px auto;
+  width: 50%;
+}
+
+
+
+#message{
+  width: 50%;
+  max-width: 500px;
+  min-width: 300px;
+  margin: auto;
+
+}
+
+.avatar-img{
+  border-radius: 50%
+}
+.main{
+  overflow: auto;
+}
+
+.user-info-small{
+  margin-top: 200px;
+  margin: 20px;
+  display: inline-block;
+  position: fixed;
+  margin-left: 100px;
+}
+
+.media#account-pg{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.media{
+  display: flex;
+  /*justify-content: center;*/
+  align-items: center;
+}
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  width: 50%;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  /*display: none;*/
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+  height: 100%;
+}
+
+/*@media screen and (max-width: )*/
+
+/* Fixed sidenav, full height */
+.vertical-menu {
+  margin-top: 50px;
+  width: 150px;
+  height: 250px;
+}
+
+/* Style the sidenav links and the dropdown button */
+.vertical-menu a, .dropdown-btn {
+  color: #D3D3D3;
+  display: block;
+  padding: 12px;
+  text-decoration: none;
+  background-color: #5f788a;
+  width:100%;
+  cursor: pointer;
+  outline: none;
+  border: none;
+}
+
+/* On mouse-over */
+.vertical-menu a:hover, .dropdown-btn:hover {
+  color: white;
+}
+
+
+/* Add an active class to the active dropdown button */
+.active {
+  background-color: ;
+  color: white;
+}
+
+/* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
+.dropdown-container {
+  display: none;
+  background-color: #5f788a;
+/*  padding-left: 8px;*/
+}
+
+/* Optional: Style the caret down icon */
+.fa-caret-down {
+  float: right;
+  color: white;
+  padding-right: 8px;
+}
+
+/*=====================================*/

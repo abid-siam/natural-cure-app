@@ -1,0 +1,26 @@
+
+{% extends "layout.html" %} 
+
+{% block content %}
+<div class="content-section">
+  <div>
+      <h1 style="text-align: center;"> Welcome to Natural Cure! </h1>
+      <br>
+      <br>
+
+        <p>
+          <b>Your Health Partner!</b> <br>
+          Natural Cure allows you to get free diagnoses based on your symptoms and provides "natural treatments" especially tailored for you!
+        </p>
+        <div class="border-top pt-3">
+            <b>Sign up Today!</b>
+            <a class="ml-2" href="{{url_for('register')}}">Register Here</a>
+        </div>
+            <b>Already have an account?</b>
+            <a class="ml-2" href="{{url_for('login')}}">Login Here</a>
+
+  </div>
+</div>
+
+
+{% endblock content %}
