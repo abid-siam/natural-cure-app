@@ -1,7 +1,7 @@
 /*Header template adapted from youtube.com/coreyschafer*/
 
 body {
-  background: #fafafa;
+  background: #edf1f7;
   color: #333333;
   margin-top: 5rem;
 }
@@ -11,7 +11,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .bg-steel {
-  background-color: #5f788a;
+  background-color: #103d6e;
 
 }
 
@@ -244,4 +244,9 @@ p{
   padding-right: 8px;
 }
 
-/*=====================================*/
+#main-footer{
+  position: fixed;
+  bottom: 15px;
+  left: 20px;
+}
+
