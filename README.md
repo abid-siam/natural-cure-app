@@ -1,8 +1,6 @@
-# natural-cure-app
 # Project Name
 Natural Cure—A Holistic Healthcare Software
 
-	
 # Project Description
 Overview: Natural Cure is a project in the field of software engineering. It requires knowledge of the best practices in natural medicine as well. The users of the Natural Cure software system will be able to input symptoms/problems and receive personalized treatment options over the internet. All remedies are based on natural medicine and free from pharmaceutical drugs. 
 	
