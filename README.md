@@ -1,5 +1,5 @@
 # natural-cure-app
-Project Name	Natural Cure—A Holistic Healthcare Software
+#Project Name	Natural Cure—A Holistic Healthcare Software
 Semester	Spring 2020
 	
 Project Description
