@@ -1,21 +1,4 @@
-'''
-Directory tree:
-Home (reroutes to dashboard if logged in)
---> About, Login, Register
-if logged in: (reroutes to home otherwise)
-    Dashboard (View all photos of following and personal photos)
-    --> About
-    --> Edit Account
-    --> Logout
-    --> Follow
-    --> ManageRequests
-        - FollowRequests
-        - TagRequests
-    --> MyGroups
-    Logout
-    --> Redirects to Home
-    User (View all personal photos and group information)
-'''
+
 import os
 import time
 import datetime
@@ -64,57 +47,6 @@ def getUser():
     cursor.close()
     return current_user
 
-
-def getTagRequests():
-    requests = []
-    username = session['username']
-    cursor = conn.cursor()
-    query = 'SELECT photoID FROM Tag WHERE username = %s AND acceptedTag = 0'
-    cursor.execute(query, (username))
-    data = cursor.fetchall()
-    for i in range(len(data)):
-        requests.append((i, data[i].get('photoID')))
-    cursor.close()
-    return requests
-
-
-def getFollowRequests():
-    requests = []
-    username = session['username']
-    cursor = conn.cursor()
-    query = 'SELECT followerUsername FROM Follow WHERE followeeUsername = %s AND acceptedFollow = 0'
-    cursor.execute(query, (username))
-    data = cursor.fetchall()
-    for i in range(len(data)):
-        requests.append((i, data[i].get('followerUsername')))
-    cursor.close()
-    return requests
-
-
-def getGroups(username):
-    # returns a list containing the names of the groups owned by 'username'
-    groupNames = []
-    cursor = conn.cursor()
-    query = 'SELECT groupName FROM CloseFriendGroup WHERE groupOwner = %s'
-    cursor.execute(query, (username))
-    data = cursor.fetchall()
-    for i in range(len(data)):
-        groupNames.append((i, data[i].get('groupName')))
-    cursor.close()
-    return groupNames
-
-
-def getMembers(groupName, groupOwner):  # used for the group form
-    members = []  # we want a simple tupple array with position and username
-    cursor = conn.cursor()
-    # everyone other than the owner (who is also a member)
-    query = 'SELECT username FROM Belong WHERE groupName = %s AND groupOwner =%s'
-    cursor.execute(query, (groupName, groupOwner))
-    data = cursor.fetchall()
-    for i in range(len(data)):
-        members.append((i, data[i].get('username')))
-    cursor.close()
-    return members
 #===========================================================================
 
 
@@ -137,26 +69,6 @@ class User():
         self.period_start = period_start
         self.subscribed = subscribed
         self.mfaEnabled = mfaEnabled
-
-    def getFollowers(self):
-        cursor = conn.cursor()
-        query = 'SELECT followerUsername FROM Follow WHERE followeeUsername = %s AND acceptedFollow = 1'
-        cursor.execute(query, (self.username))
-        data = cursor.fetchall()
-        for i in range(len(data)):
-            self.followers.append((i, data[i].get('followerUsername')))
-        self.numberOfFollowers = len(self.followers)
-        cursor.close()
-
-    def getFollowing(self):
-        cursor = conn.cursor()
-        query = 'SELECT followeeUsername FROM Follow WHERE followerUsername = %s AND acceptedFollow = 1'
-        cursor.execute(query, (self.username))
-        data = cursor.fetchall()
-        for i in range(len(data)):
-            self.following.append((i, data[i].get('followeeUsername')))
-        self.numberOfFollowing = len(self.following)
-        cursor.close()
 
 
 @app.route("/")
@@ -335,11 +247,6 @@ def logout():
     flash('You have logged out', 'success')
     return redirect(url_for('home'))
 
-# handles follow requests from user1 to user2
-# if user2 is a public account, the request is fuliflled right away
-# if user2 is a private account, user2 will recieve a follow request which can either be accepted or decline
-# if the follow request is accepted, user1 will get notified once logged in
-# if the follow is declined, the request will be removed from the database and user1 will not get notified
 
 
 @app.route("/settings")
@@ -349,143 +256,6 @@ def settings():
     else:
         return redirect(url_for('home'))
 
-
-@app.route("/follow", methods=['GET', 'POST'])
-def follow():
-    form = FollowRequestForm()
-    if 'logged_in' in session:
-        if form.validate_on_submit():
-            username = session['username']
-            userFollow = form.userFollow.data
-            # search for the user
-            cursor = conn.cursor()
-            query = 'SELECT * From Person WHERE username=%s'
-            cursor.execute(query, (userFollow))
-            data = cursor.fetchone()
-            if (data['isPrivate']):  # create a follow request
-                ins = 'INSERT INTO Follow(followerUsername,followeeUsername,acceptedFollow)VALUES(%s, %s, 0)'
-                cursor.execute(ins, (username, userFollow))
-                conn.commit()
-                cursor.close()
-
-                # notify user follow request has been sent
-                flash(f'{userFollow} has recieved your follow request! You will be notified if it is accepted', 'success')
-                return redirect(url_for('follow'))
-            # the userFollow is public
-            ins = 'INSERT INTO Follow(followerUsername,followeeUsername,acceptedFollow) VALUES(%s, %s, 1)'
-            cursor.execute(ins, (username, userFollow))
-            conn.commit()
-            cursor.close()
-            flash(f'You Now Follow {userFollow}!', 'success')
-            return redirect(url_for('follow'))
-        return render_template('follow.html', title='Follow', form=form, isLoggedin=True)
-
-
-@app.route("/followRequests", methods=['GET', 'POST'])
-def followRequests():
-    form = ManageFollowRequestForm()
-    if 'logged_in' in session:
-        current_user = getUser()
-        requests = getFollowRequests()
-        if request.method == 'GET':
-            form.select.choices = requests
-
-        elif request.method == 'POST':
-            # form.select.data returns a list of strings corresponding to the position of a username in requests
-            # iterate through the data and update the acceptedFollow
-            # make this better
-            result = form.select.data
-            cursor = conn.cursor()
-            for i in range(len(form.select.data)):
-                accepted = requests[int(result[i])][1]
-                update = 'UPDATE Follow SET acceptedFollow = 1 WHERE followerUsername=%s AND followeeUsername=%s'
-                cursor.execute(update, (accepted, session['username']))
-                conn.commit()
-            cursor.close()
-            if len(result) > 1:
-                flash('You have new followers! Requests have been updated!', 'success')
-                return redirect(url_for('followRequests'))
-            else:
-                flash('You have a new follower! Requests have been updated!', 'success')
-                return redirect(url_for('followRequests'))
-        # if form.validate_on_submit():
-
-        return render_template('followRequests.html', title='Follow Requests', form=form, isLoggedin=True, current_user=current_user)
-    else:
-        return redirect(url_for('home'))
-
-
-@app.route("/groups", methods=['GET', 'POST'])
-def groups():
-    if 'logged_in' in session:
-        return render_template('groups.html', title='Groups', isLoggedin=True)
-    else:
-        return redirect(url_for('home'))
-
-
-@app.route("/groups/create", methods=['GET', 'POST'])
-def createGroup():
-    if 'logged_in' in session:
-        # handles creating groups
-        form = CreateGroupForm()
-        current_user = getUser()
-        username = current_user.username
-
-        if form.validate_on_submit():
-            # handle CreateGroupForm
-            name = form.name.data
-            cursor = conn.cursor()
-            ins = 'INSERT INTO CloseFriendGroup(groupName, groupOwner) VALUES (%s,%s)'
-            cursor.execute(ins, (name, username))
-            # add ourselves to the group (in belongs)
-            ins = 'INSERT INTO Belong(groupName, groupOwner, username) VALUES (%s,%s,%s)'
-            cursor.execute(ins, (name, username, username))
-            conn.commit()
-            cursor.close()
-
-            flash('You Successfuly Created A Close Friend Group! You Can Now Add Your Friends!', 'success')
-            return redirect(url_for('createGroup'))
-
-        return render_template('createGroup.html', title='Create Group', form=form, isLoggedin=True, current_user=current_user)
-    else:
-        return redirect(url_for('home'))
-
-
-@app.route("/groups/manage", methods=['GET', 'POST'])
-def manageGroups():
-    form = ManageGroupForm()
-    if 'logged_in' in session:
-        current_user = getUser()
-        username = current_user.username
-        groupNames = getGroups(username)  # returns a tupple list of the grouNames owned by 'username'
-        form.group.choices = groupNames
-
-        if form.validate_on_submit():  # and form.newUserForm.validate(form):
-            groupName = groupNames[int(form.group.data)][1]
-            # handle 'add user' event, the user inputed should be added to the group
-            addMember = form.newUser.data
-            cursor = conn.cursor()
-            ins = 'INSERT INTO Belong(groupName, groupOwner, username) VALUES (%s,%s,%s)'
-
-            cursor.execute(ins, (groupName, username, addMember))
-            conn.commit()
-            cursor.close()
-            flash(f'{addMember} is now in your {groupName} group!', 'success')
-            return redirect(url_for('manageGroups'))
-
-            # elif form.removeMember.data:  # and form.currentMemberForm.validate(form):
-            #     print('oh no')
-            #     # handle 'remove user' event, the current member in the group should be removed from the group
-            #     removeUser = form.members.data  # a list of members
-            #     pass
-        # elif request.method == 'GET':
-        #     print('In here!')
-        #     form.group.choices = groupNames
-            # populate the group form and the current user form
-            # form.members.choices = []
-        return render_template('manageGroups.html', title='Groups', form=form, isLoggedin=True, current_user=current_user)
-    else:
-        return redirect(url_for('home'))
 
 
 @app.route("/account", methods=['GET', 'POST'])
@@ -568,110 +338,6 @@ def update():
     else:
         return redirect(url_for('home'))
 
-
-@app.route("/post", methods=['GET', 'POST'])
-def post():
-    form = CreatePostForm()
-    if 'logged_in' in session:
-        # need to populate the groups
-        username = session['username']
-        groupNames = getGroups(username)
-        form.groups.choices = groupNames
-        if form.validate_on_submit():
-            # print(form.image.data)
-            picture_file = save_picture2(form.image.data)
-            caption = form.caption.data
-            allFollowers = form.allFollowers.data
-            ts = time.time()
-            timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-            if allFollowers == 'T':
-                # insert the new photo to database
-                # no need to check groups
-                cursor = conn.cursor()
-                ins = 'INSERT INTO Photo(photoOwner, timestamp, filePath, caption, allFollowers) VALUES(%s,%s,%s,%s,1)'
-                cursor.execute(ins, (username, timestamp, picture_file, caption))
-                conn.commit()
-                cursor.close()
-            elif allFollowers == 'F':
-                # insert new photo to database
-                cursor = conn.cursor()
-                ins = 'INSERT INTO Photo(photoOwner, timestamp, filePath, caption, allFollowers) VALUES(%s,%s,%s,%s,0)'
-                cursor.execute(ins, (username, timestamp, picture_file, caption))
-                conn.commit()
-                cursor.close()
-                # get the group names
-                results = form.groups.data
-                for i in range(len(form.groups.data)):
-                    name = groupNames[int(results[i])][1]
-                    cursor = conn.cursor()
-                    # share photo with all groups indicated in groups.data
-                    ins = 'INSERT INTO Share(groupName, groupOwner, photoID) VALUES(%s,%s,LAST_INSERT_ID())'
-                    cursor.execute(ins, (name, username))
-                    conn.commit()
-                    cursor.close()
-            flash('Your Photo Has Been Posted!', 'success')
-            return redirect(url_for('post'))
-        return render_template('post.html', title='Post', form=form, isLoggedin=True)
-    else:
-        return redirect(url_for('home'))
-
-
-@app.route("/tag", methods=['GET', 'POST'])
-def tag():
-    form = TagUserForm()
-    var = request.args.get('id', None)
-    if 'logged_in' in session:
-        if request.method == 'GET':
-            form.photoID.data = var
-
-        if form.validate_on_submit():
-            userTag = form.userTag.data
-            photoID = form.photoID.data
-            # create a tag request
-            cursor = conn.cursor()
-            ins = 'INSERT INTO Tag(username, photoID, acceptedTag) VALUES(%s,%s,0)'
-            cursor.execute(ins, (userTag, photoID))
-            conn.commit()
-            cursor.close()
-            flash(f'A Tag request was sent to {userTag} for photo ID: {photoID}', 'success')
-            return redirect(url_for('dashboard'))
-        return render_template('tag.html', title='Tag', isLoggedin=True, form=form)
-
-    else:
-        return redirect(url_for('home'))
-
-
-@app.route("/tagRequests", methods=['GET', 'POST'])
-def tagRequests():
-    form = ManageTagRequestForm()
-    if 'logged_in' in session:
-        current_user = getUser()
-        requests = getTagRequests()
-        if request.method == 'GET':
-            form.select.choices = requests
-
-        elif request.method == 'POST':
-            # form.select.data returns a list of strings corresponding to the position of a username in requests
-            # iterate through the data and update the acceptedTag
-            result = form.select.data
-            cursor = conn.cursor()
-            for i in range(len(form.select.data)):
-                accepted = requests[int(result[i])][1]  # get the photoID
-                update = 'UPDATE Tag SET acceptedTag = 1 WHERE photoID=%s AND username=%s'
-                cursor.execute(update, (accepted, session['username']))
-                conn.commit()
-            cursor.close()
-            if len(result) > 1:
-                flash('You have been tagged in new photos! Requests have been updated!', 'success')
-                return redirect(url_for('followRequests'))
-            else:
-                flash('You have been tagged in a new photo! Requests have been updated!', 'success')
-                return redirect(url_for('tagRequests'))
-        # if form.validate_on_submit():
-
-        return render_template('tagRequests.html', title='Tag Requests', form=form, isLoggedin=True, current_user=current_user)
-    else:
-        return redirect(url_for('home'))
 
 # #==================================================================================
 
