@@ -1,4 +1,5 @@
-CREATE TABLE User(
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE IF NOT EXISTS `user`(
     username VARCHAR(20),
     password CHAR(64),
     fname VARCHAR(20),
@@ -17,7 +18,8 @@ CREATE TABLE User(
 );
 
 -- login /admin to manage users and subscriptions 
-CREATE TABLE Administrator( 
+DROP TABLE IF EXISTS `administrator`;
+CREATE TABLE IF NOT EXISTS `administrator`( 
     username VARCHAR(20),
     password CHAR(64),
     fname CHAR(20),
@@ -27,20 +29,24 @@ CREATE TABLE Administrator(
 );
 
 -- row created after a diagnosis session
-CREATE TABLE Diagnosis(
+DROP TABLE IF EXISTS `diagnosis`;
+CREATE TABLE IF NOT EXISTS `diagnosis`(
     recordID int NOT NULL AUTO_INCREMENT,
     username VARCHAR(20), -- user that initiates the diagnosis 
     symptoms VARCHAR(1024), -- comma seperated string containing symptom_ids provided by the user 
     timestamp TIMESTAMP,
+	PRIMARY KEY(recordID)
 );
 
--- row created after api returns diagnosis and treatment is chosen 
-CREATE TABLE Condition(
+-- row created after api returns diagnosis and treatment is chosen
+DROP TABLE IF EXISTS `condition`;
+CREATE TABLE IF NOT EXISTS `condition`(
     recordID int, -- corresponds to a diagnosis made 
     conditionID VARCHAR(10), -- corresponds to the output condition id from the api 
+    username VARCHAR(20),
     probability DECIMAL(9,8),
     treatment VARCHAR(1024), -- may need to be reorganized (maybe a seperate table for treatments?)
     PRIMARY KEY (recordID, conditionID),
-    FOREIGN KEY (recordID) REFERENCES Diagnosis(recordID),
-    FOREIGN KEY (username) REFERENCES [User](username)
+    FOREIGN KEY (recordID) REFERENCES `diagnosis`(recordID),
+    FOREIGN KEY (username) REFERENCES `user`(username)
 );
