@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `user`(
     addr_zip CHAR(5),
     email VARCHAR(320),
     dob DATE,
-    period_start TIMESTAMP, -- time subscription is made or renewed 
+    period_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- time subscription is made or renewed 
     subscribed Boolean,
     mfaEnabled Boolean,
     PRIMARY KEY (username)
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `diagnosis`(
     recordID int NOT NULL AUTO_INCREMENT,
     username VARCHAR(20), -- user that initiates the diagnosis 
     symptoms VARCHAR(1024), -- comma seperated string containing symptom_ids provided by the user 
-    timestamp TIMESTAMP,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY(recordID)
 );
 
