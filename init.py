@@ -258,13 +258,13 @@ def login():
                 return redirect(url_for("dashboard"))
             else:  # passwords do not match
 
-                flash('Login Unsuccessful. Please check username and password', 'danger')
+                flash('Login Unsuccessful. Please check username and password.', 'danger')
                 # we don't want to flash the password being incorrect, but just highliight it and display it as an error underneath the password field
 
             # close connection
             cursor.close()
         else:  # no results with the specified username in the database
-            flash('Login Unsuccessful. No Account Exists With That Username', 'danger')
+            flash('Login Unsuccessful. No Account Exists With That Username.', 'danger')
             cursor.close()
 
     return render_template('login.html', title='Login', form=form)
