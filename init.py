@@ -204,13 +204,13 @@ def dashboard():
         return redirect(url_for('home'))
 
 
-@app.route("/about")
-def about():
+@app.route("/diagnosis")
+def diagnosis():
     isLoggedin = False
     if 'logged_in' in session:
         isLoggedin = True
-    # Will contain project information
-    return render_template('about.html', title='About', isLoggedin=isLoggedin)
+    # Will contain diagnosis information
+    return render_template('diagnosis.html', title='Diagnosis', isLoggedin=isLoggedin)
 
 
 @app.route("/register", methods=['GET', 'POST'])
