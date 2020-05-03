@@ -1,15 +1,7 @@
-<!-- ++++++++++++++++++++++++++++++++++++++++
-                  ACCOUNT PAGE
-     ++++++++++++++++++++++++++++++++++++++++ -->
 
-{% extends "layout.html" %} <!-- this is like an #include statement which brings copies the code from the specified file  -->
+{% extends "layout.html" %}
 {% block content %}
-<!--
-Fields a User may update:
-1. username
-2. bio
-3. avatar (profile picture)
--->
+
     <div class="content-section" id="main-user-info">
       <div class="media" id="account-pg">
         <img class="rounded-circle account-img" alt="User image" src="{{ current_user.avatar }}" style="width: 125px; height: 125px;">
