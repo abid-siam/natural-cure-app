@@ -45,6 +45,19 @@
                         {{ form.username(class="form-control form-control-lg")}} <!-- input field is valid -->
                     {% endif %}
                 </div>
+                <div class="form-group">
+                    {{ form.gender.label(class="form-control-label")}}
+                    {% if form.gender.errors %}
+                        {{ form.gender(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.gender.errors %}
+                                <span> {{ error }} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.gender(class="form-control form-control-lg")}} 
+                    {% endif %}
+                </div>
 
                 <div class="form-group">
                     {{ form.password.label(class="form-control-label")}}
@@ -72,6 +85,85 @@
                         {{ form.confirm_password(class="form-control form-control-lg")}} <!-- input field is valid -->
                     {% endif %}
                 </div>
+                <div class="form-group">
+                    {{ form.addr_street.label(class="form-control-label")}}
+                    {% if form.addr_street.errors %}
+                        {{ form.addr_street(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.addr_street.errors %}
+                                <span> {{ error }} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.addr_street(class="form-control form-control-lg")}} 
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.addr_city.label(class="form-control-label")}}
+                    {% if form.addr_city.errors %}
+                        {{ form.addr_city(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.addr_city.errors %}
+                                <span> {{ error }} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.addr_city(class="form-control form-control-lg")}} 
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.addr_state.label(class="form-control-label")}}
+                    {% if form.addr_state.errors %}
+                        {{ form.addr_state(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.addr_state.errors %}
+                                <span> {{ error }} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.addr_state(class="form-control form-control-lg")}} 
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.addr_zip.label(class="form-control-label")}}
+                    {% if form.addr_zip.errors %}
+                        {{ form.addr_zip(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.addr_zip.errors %}
+                                <span> {{ error }} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.addr_zip(class="form-control form-control-lg")}} 
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label(class="form-control-label")}}
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                <span> {{ error }} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.email(class="form-control form-control-lg")}} 
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.dob.label(class="form-control-label")}}
+                    {% if form.dob.errors %}
+                        {{ form.dob(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.dob.errors %}
+                                <span> {{ error }} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.dob(class="form-control form-control-lg")}} 
+                    {% endif %}
+                </div>
+
 
             </fieldset>
             <div class="form-group">

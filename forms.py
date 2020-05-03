@@ -1,9 +1,10 @@
 from flask import session
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField,\
-    TextAreaField, SelectMultipleField, IntegerField, SelectField, RadioField
-from wtforms.validators import DataRequired, Length, EqualTo, ValidationError, Optional
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField, TextAreaField,\
+                    SelectMultipleField, SelectField, RadioField 
+from wtforms.validators import DataRequired, Length, EqualTo, ValidationError, Optional, Email
+from wtforms.fields.html5 import EmailField, IntegerField, DateField
 from connection import *
 
 
@@ -11,13 +12,20 @@ class RegistrationForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=1, max=20)])
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=1, max=20)])
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    gender = StringField('Gender', validators=[DataRequired(), Length(min=1, max=6)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    addr_street = StringField('Address--Street', validators=[DataRequired(), Length(min=1, max=50)])
+    addr_city = StringField('Address--City', validators=[DataRequired(), Length(min=1, max=25)])
+    addr_state = StringField('Address--State', validators=[DataRequired(), Length(min=2, max=2)])
+    addr_zip = StringField('Address--Zip Code', validators=[DataRequired(), Length(min=5, max=5)])
+    email = EmailField('Email Address', validators=[DataRequired(), Email()])
+    dob = DateField('Date of Birth', validators=[DataRequired()])
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):
         cursor = conn.cursor()
-        query = 'SELECT * FROM Person WHERE username = %s'
+        query = 'SELECT * FROM user WHERE username = %s'
         cursor.execute(query, (username.data))
         data = cursor.fetchone()
         cursor.close()

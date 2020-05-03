@@ -57,7 +57,10 @@ def getUser():
     cursor.execute(query, (username))
     data = cursor.fetchone()
     current_user = User(data["fname"], data["lname"], username,
-                        data["password"], data["bio"], data["avatar"], data["isPrivate"])
+                        data["password"], data["gender"], data["addr_street"],
+                        data["addr_city"], data["addr_state"], data["addr_zip"],
+                        data["email"], data["dob"], data["period_start"],
+                        data["subscribed"], data["mfaEnabled"])
     cursor.close()
     return current_user
 
@@ -117,18 +120,23 @@ def getMembers(groupName, groupOwner):  # used for the group form
 
 class User():
 
-    def __init__(self, fName, lName, username, password, bio, avatar, isPrivate):
+    def __init__(self, fName, lName, username, password, gender, addr_street,
+                 addr_city, addr_state, addr_zip, email, dob, period_start,
+                 subscribed, mfaEnabled):
         self.firstName = fName
         self.lastName = lName
         self.username = username
         self.password = password
-        self.bio = bio
-        self.avatar = url_for('static', filename='profilePics/' + str(avatar))
-        self.isPrivate = isPrivate
-        self.followers = []
-        self.following = []
-        self.numberOfFollowers = 0
-        self.numberOfFollowing = 0
+        self.gender = gender
+        self.addr_street = addr_street
+        self.addr_city = addr_city
+        self.addr_state = addr_state
+        self.addr_zip = addr_zip
+        self.email = email
+        self.dob = dob
+        self.period_start = period_start
+        self.subscribed = subscribed
+        self.mfaEnabled = mfaEnabled
 
     def getFollowers(self):
         cursor = conn.cursor()
@@ -211,21 +219,30 @@ def register():
     isLoggedin = False
     if 'logged_in' in session:
         return redirect(url_for('home'))
-    if form.validate_on_submit():  # the function valifate_on_submit() is a member function of FlaskForm
+    if form.validate_on_submit():  # the function validate_on_submit() is a member function of FlaskForm
         # check that the user information doesn't already exist
         firstName = form.first_name.data
         lastName = form.last_name.data
         username = form.username.data
+        gender = form.gender.data
         password_hashed = encrypt(form.password.data)
+        addr_street = form.addr_street.data
+        addr_city = form.addr_city.data
+        addr_state = form.addr_state.data
+        addr_zip = form.addr_zip.data
+        email = form.email.data
+        dob = form.dob.data
+
         # create and execute query
         cursor = conn.cursor()
-        ins = 'INSERT INTO Person(fname,lname,username,password,avatar,isPrivate) VALUES(%s,%s,%s,%s,"default.jpg",1)'
-        cursor.execute(ins, (firstName, lastName, username, password_hashed))
+        ins = 'INSERT INTO user(fname,lname,username,gender,password,addr_street,addr_city,\
+        addr_state, addr_zip, email, dob, subscribed, mfaEnabled) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,0,0)'
+        cursor.execute(ins, (firstName, lastName, username, gender, password_hashed, addr_street, addr_city, addr_state, addr_zip, email, dob))
         # save changes to database
         conn.commit()
         cursor.close()
         # notify the user of successful creation of account
-        flash(f'Account created for {form.username.data}! You can now login', 'success')  # the second argument taken by the flash function indicates the type of result our message is
+        flash(f'Account created for {form.username.data}! You can now login!', 'success')  # the second argument taken by the flash function indicates the type of result our message is
 
         return redirect(url_for('login'))
 
@@ -242,7 +259,7 @@ def login():
 
         cursor = conn.cursor()
         # execute query
-        query = cursor.execute("SELECT * FROM Person WHERE username = %s", username)
+        query = cursor.execute("SELECT * FROM user WHERE username = %s", username)
 
         if(query > 0):  # sts in the database
             # get stored hashed password
