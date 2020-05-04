@@ -7,9 +7,7 @@ from flask import Flask
 from PIL import Image
 from flask import render_template, request, session, url_for, flash, redirect
 import hashlib
-from forms import RegistrationForm, LoginForm, ChangePassForm, \
-    FollowRequestForm, ManageFollowRequestForm, UpdateUserForm, CreateGroupForm, \
-    ManageGroupForm, CreatePostForm, TagUserForm, ManageTagRequestForm
+from forms import RegistrationForm, LoginForm, ChangePassForm, UpdateUserForm
 from connection import *
 
 app = Flask(__name__)
@@ -316,9 +314,15 @@ def update():
             username = form.username.data
             gender = form.gender.data
             email = form.email.data
+            addr_street = form.addr_street.data
+            addr_city = form.addr_city.data
+            addr_state = form.addr_state.data
+            addr_zip = form.addr_zip.data
             cursor = conn.cursor()
-            update = 'UPDATE user SET fName=%s, lName=%s, username=%s, gender=%s, email=%s WHERE username=%s'
-            cursor.execute(update, (firstName, lastName, username, gender, email, currentUsername))
+            update = 'UPDATE user SET fName=%s, lName=%s, username=%s, gender=%s, email=%s, \
+                addr_street=%s, addr_city=%s, addr_state=%s, addr_zip=%s WHERE username=%s'
+            cursor.execute(update, (firstName, lastName, username, gender, email, addr_street,
+                addr_city, addr_state, addr_zip, currentUsername))
             session['username'] = username
             conn.commit()
             cursor.close()
@@ -330,6 +334,10 @@ def update():
             form.username.data = current_user.username
             form.gender.data = current_user.gender
             form.email.data = current_user.email
+            form.addr_street.data = current_user.addr_street
+            form.addr_city.data = current_user.addr_city
+            form.addr_state.data = current_user.addr_state
+            form.addr_zip.data = current_user.addr_zip
         return render_template('edit.html', title='Edit Account', form=form, current_user=current_user, isLoggedin=True)
     else:
         return redirect(url_for('home'))
