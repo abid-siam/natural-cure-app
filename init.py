@@ -75,11 +75,9 @@ def home():
     if 'logged_in' in session:
         return redirect(url_for('dashboard'))  
 
-    return render_template('home.html', title='Home')
+    return render_template('home.html')
 
 # only accessible if logged in
-
-
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     if 'logged_in' in session:
@@ -91,10 +89,10 @@ def dashboard():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    form = RegistrationForm()
-    isLoggedin = False
     if 'logged_in' in session:
         return redirect(url_for('home'))
+    form = RegistrationForm()
+    isLoggedin = False
     if request.method == 'POST':
         if form.validate_on_submit():  # the function validate_on_submit() is a member function of FlaskForm
             # check that the user information doesn't already exist
@@ -128,6 +126,8 @@ def register():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    if 'logged_in' in session:
+        return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():  # no errors when inputting data and no empty fields
         # fetch data from the form
@@ -166,10 +166,10 @@ def login():
 
 @app.route("/changePassword", methods=['GET', 'POST'])
 def changePassword():
-    form = changePassForm()
     # should be logged in already
     # user enters current password
     if 'logged_in' in session:
+        form = changePassForm()
         if form.validate_on_submit():
             # get information from form
             currentPass = form.currentPass.data
@@ -208,8 +208,9 @@ def changePassword():
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
-    session.clear()
-    flash('You Have Been Successfully Logged Out.', 'success')
+    if 'logged_in' in session:
+        session.clear()
+        flash('You Have Been Successfully Logged Out.', 'success')
     return redirect(url_for('home'))
 
 
@@ -305,9 +306,9 @@ def save_picture2(form_picture):
 
 @app.route("/account/edit", methods=['GET', 'POST'])
 def update():
-    form = UpdateUserForm()
-    current_user = getUser()
     if 'logged_in' in session:
+        form = UpdateUserForm()
+        current_user = getUser()
         if request.method == 'GET':  # fill in form with information in database
             form.first_name.data = current_user.firstName
             form.last_name.data = current_user.lastName
