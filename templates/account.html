@@ -4,24 +4,13 @@
 
     <div class="content-section" id="main-user-info">
       <div class="media" id="account-pg">
-        <img class="rounded-circle account-img" alt="User image" src="{{ current_user.avatar }}" style="width: 125px; height: 125px;">
             <div style= "margin-left: 50px" class="media-body">
-              <p style="font-size: 30px"> <b>{{ current_user.username }}</b></p> <br>
-              <p> <b>{{ current_user.numberOfFollowers }}</b></p>
-              {% if current_user.followers|length == 1 %}
-              <p> Follower</p>
-              {% else %}
-              <p> Followers</p>
-              {% endif %}
-              <p><b>{{ current_user.numberOfFollowing }}</b> Following</p> <br>
-              <p> {{ current_user.firstName }} {{current_user.lastName}}</p> <br>
-              <p >{{current_user.bio}}</p> <br>
-              {% if current_user.isPrivate %}
-                  <p class="text-secondary">Your account is Private</p>
-              {% else %}
-                  <p class="text-secondary">Your account is Public</p>
-              {% endif %}
-
+              <p style="font-size: 40px"> <b>{{ current_user.username }}</b></p> <br><br>
+              <p> First Name: <b>{{ current_user.firstName }}</b></p> <br>
+              <p> Last Name: <b>{{current_user.lastName}}</b></p> <br>
+              <p> Date of Birth: <b>{{current_user.dob}}</b></p> <br>
+              <p> Gender: <b>{{current_user.gender}}</b></p> <br>
+              <p> Email: <b>{{current_user.email}}</b></p> <br><br><br>
             </div>
         </div>
         <a class="btn btn-light" href="/account/edit" role="button">Edit Profile</a>
