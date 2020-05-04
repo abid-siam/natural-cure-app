@@ -95,33 +95,34 @@ def register():
     isLoggedin = False
     if 'logged_in' in session:
         return redirect(url_for('home'))
-    if form.validate_on_submit():  # the function validate_on_submit() is a member function of FlaskForm
-        # check that the user information doesn't already exist
-        firstName = form.first_name.data
-        lastName = form.last_name.data
-        username = form.username.data
-        gender = form.gender.data
-        password_hashed = encrypt(form.password.data)
-        addr_street = form.addr_street.data
-        addr_city = form.addr_city.data
-        addr_state = form.addr_state.data
-        addr_zip = form.addr_zip.data
-        email = form.email.data
-        dob = form.dob.data
+    if request.method == 'POST':
+        if form.validate_on_submit():  # the function validate_on_submit() is a member function of FlaskForm
+            # check that the user information doesn't already exist
+            firstName = form.first_name.data
+            lastName = form.last_name.data
+            username = form.username.data
+            gender = form.gender.data
+            password_hashed = encrypt(form.password.data)
+            addr_street = form.addr_street.data
+            addr_city = form.addr_city.data
+            addr_state = form.addr_state.data
+            addr_zip = form.addr_zip.data
+            email = form.email.data
+            dob = form.dob.data
 
-        # create and execute query
-        cursor = conn.cursor()
-        ins = 'INSERT INTO user(fname,lname,username,gender,password,addr_street,addr_city,\
-        addr_state, addr_zip, email, dob, subscribed, mfaEnabled) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,0,0)'
-        cursor.execute(ins, (firstName, lastName, username, gender, password_hashed, addr_street, addr_city, addr_state, addr_zip, email, dob))
-        # save changes to database
-        conn.commit()
-        cursor.close()
-        # notify the user of successful creation of account
-        flash(f'Account Created for {form.username.data}! You Can Now Log In!', 'success')  # the second argument taken by the flash function indicates the type of result our message is
-
-        return redirect(url_for('login'))
-
+            # create and execute query
+            cursor = conn.cursor()
+            ins = 'INSERT INTO user(fname,lname,username,gender,password,addr_street,addr_city,\
+            addr_state, addr_zip, email, dob, subscribed, mfaEnabled) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,0,0)'
+            cursor.execute(ins, (firstName, lastName, username, gender, password_hashed, addr_street, addr_city, addr_state, addr_zip, email, dob))
+            # save changes to database
+            conn.commit()
+            cursor.close()
+            # notify the user of successful creation of account
+            flash(f'Account Created for {form.username.data}! You Can Now Log In!', 'success')  
+            return redirect(url_for('login'))
+        else:
+            flash('Please Check the Errors Below.', 'danger')
     return render_template('register.html', title='Register', form=form, isLoggedin=isLoggedin)
 
 
@@ -307,28 +308,7 @@ def update():
     form = UpdateUserForm()
     current_user = getUser()
     if 'logged_in' in session:
-        if form.validate_on_submit():
-            currentUsername = session['username']
-            firstName = form.first_name.data
-            lastName = form.last_name.data
-            username = form.username.data
-            gender = form.gender.data
-            email = form.email.data
-            addr_street = form.addr_street.data
-            addr_city = form.addr_city.data
-            addr_state = form.addr_state.data
-            addr_zip = form.addr_zip.data
-            cursor = conn.cursor()
-            update = 'UPDATE user SET fName=%s, lName=%s, username=%s, gender=%s, email=%s, \
-                addr_street=%s, addr_city=%s, addr_state=%s, addr_zip=%s WHERE username=%s'
-            cursor.execute(update, (firstName, lastName, username, gender, email, addr_street,
-                addr_city, addr_state, addr_zip, currentUsername))
-            session['username'] = username
-            conn.commit()
-            cursor.close()
-            flash('Your Account Has Been Updated!', 'success')  
-            return redirect(url_for('update'))
-        if request.method == 'GET':  # fill in form with information given
+        if request.method == 'GET':  # fill in form with information in database
             form.first_name.data = current_user.firstName
             form.last_name.data = current_user.lastName
             form.username.data = current_user.username
@@ -338,6 +318,31 @@ def update():
             form.addr_city.data = current_user.addr_city
             form.addr_state.data = current_user.addr_state
             form.addr_zip.data = current_user.addr_zip
+        elif request.method == 'POST':
+            if form.validate_on_submit():
+                currentUsername = session['username']
+                firstName = form.first_name.data
+                lastName = form.last_name.data
+                username = form.username.data
+                gender = form.gender.data
+                email = form.email.data
+                addr_street = form.addr_street.data
+                addr_city = form.addr_city.data
+                addr_state = form.addr_state.data
+                addr_zip = form.addr_zip.data
+                cursor = conn.cursor()
+                update = 'UPDATE user SET fName=%s, lName=%s, username=%s, gender=%s, email=%s, \
+                    addr_street=%s, addr_city=%s, addr_state=%s, addr_zip=%s WHERE username=%s'
+                cursor.execute(update, (firstName, lastName, username, gender, email, addr_street,
+                    addr_city, addr_state, addr_zip, currentUsername))
+                session['username'] = username
+                conn.commit()
+                cursor.close()
+                flash('Your Account Has Been Successfully Updated!', 'success')  
+                return redirect(url_for('update'))
+            else:
+                flash('Please Check the Errors Below.', 'danger')
+
         return render_template('edit.html', title='Edit Account', form=form, current_user=current_user, isLoggedin=True)
     else:
         return redirect(url_for('home'))
