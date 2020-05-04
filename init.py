@@ -36,7 +36,7 @@ def verify(strToVerify, compareTo):
 def getUser():
     username = session['username']
     cursor = conn.cursor()
-    query = 'SELECT * FROM Person WHERE username = %s'
+    query = 'SELECT * FROM user WHERE username = %s'
     cursor.execute(query, (username))
     data = cursor.fetchone()
     current_user = User(data["fname"], data["lname"], username,
@@ -86,32 +86,7 @@ def home():
 def dashboard():
     if 'logged_in' in session:
         current_user = getUser()
-        username = current_user.username
-        # fetch photos
-        '''
-        User can view photos if:
-        1. User is the owner of the photo
-        2. The photo is allFollowers and User is a follower of the owner
-        3. The photo is not allFollowers and the User is in a closefriendgroup that the photo has been shared with
-        '''
-        cursor = conn.cursor()
-        query = 'SELECT photoID,photoOwner, caption, timestamp, filePath FROM Photo AS p1 WHERE photoOwner = %s OR photoID IN (SELECT photoID FROM Photo WHERE photoOwner != %s AND allFollowers = 1 AND photoOwner IN (SELECT followeeUsername FROM follow WHERE followerUsername = %s AND followeeUsername = photoOwner AND acceptedFollow = 1)) OR photoID IN (SELECT photoID FROM share NATURAL JOIN belong NATURAL JOIN photo WHERE username = %s AND photoOwner != %s) ORDER BY timestamp DESC'
-
-        cursor.execute(query, (username, username, username, username, username))
-        data = cursor.fetchall()
-
-        # modify data to include the first and last names of the tagees
-        for post in data:  # post is a dictionary
-            query = 'SELECT fname, lname FROM Tag NATURAL JOIN Person NATURAL JOIN Photo WHERE acceptedTag = 1 AND photoID = %s'
-            cursor.execute(query, (post['photoID']))
-            result = cursor.fetchall()
-            if (result):
-                post['tagees'] = result
-                # print(post)
-
-        cursor.close()
-        # clean up data
-        return render_template('dashboard.html', title='Dashboard', current_user=current_user, isLoggedin=True, posts=data)
+        return render_template('dashboard.html', title='Dashboard', current_user=current_user, isLoggedin=True)
     else:
         return redirect(url_for('home'))
 

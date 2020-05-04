@@ -1,52 +1,14 @@
 
 {% extends "layout.html" %} 
 {% block content %}
-    {% if posts %}
-      {% for post in posts %}
-        <div class="content-section" id="image-content">
-              <div class="article-metadata" style="margin-left:20px;margin-right:20px;margin-bottom: 10px">
-                <p><b>{{post.photoOwner}}</b></p> <br>
-                <small class=text-muted> Photo ID: {{post.photoID}}</small>
-                <small class="text-muted" style="float: right;">Posted on {{ post.timestamp }}</small> <br>
-              </div>
-              <img src="static/posts/{{post.filePath}}" style= "width:100%">
-              <br>
-              <div class="image-description" style="margin-left:20px;margin-top:10px">
-                <p>{{post.caption}}</p>
-                <a href="{{ url_for('tag', id=post.photoID) }}" style="float:right; margin-right: 20px" class="btn btn-secondary btn-sm active" role="button" aria-pressed="true">Tag User</a>
-                <br>
-                <p>Tagged users:
-                {% if post.tagees %}
-                  {% for tagged in post.tagees %}
-                    {% if loop.last %}
-                    <p>{{tagged.fname}} {{tagged.lname}}</p>
-                    {% else %}
-                    <p>{{tagged.fname}} {{tagged.lname}},</p>
-                    {% endif %}
-                  {% endfor %}
-                {% else %}
-                 <p> None</p>
-                {% endif %}
-                </p>
-              </div>
-            </div>
-        {% endfor %}
-      {% else %}
-        <div class="content-section" id="post-holder">
-          <p>Posts that are visible to you will be here</p>
-        </div>
-
-      {% endif %}
 
         <div class="user-info-small">
-            <img src="{{current_user.avatar}}" alt="User avatar" class="rounded-circle" style="width: 50px; height: 50px;">
-              <p>
-                <b><a href="/account" style="text-decoration: none; color: black;">{{current_user.username}}</a></b>
+              <p style="color: black; font-size: 30px;">
+                <b>{{current_user.username}}</b>
               </p>
 
             <div class="vertical-menu">
-                <a href="/post">Post</a>
-                <a href="/follow">Generate Report</a>
+                <a href="/report">Generate Report</a>
                 <button class="dropdown-btn">Manage Requests
                   <i class="fa fa-caret-down"></i>
                 </button>
@@ -54,7 +16,7 @@
                       <a href="/followRequests">Follow Requests</a>
                       <a href="/tagRequests">Tag Requests</a>
                     </div>
-                <a href="/groups">My Groups</a>
+                <a href="/resources">Health Resources</a>
             </div>
         </div>
 
