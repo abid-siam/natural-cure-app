@@ -118,7 +118,7 @@ def register():
         conn.commit()
         cursor.close()
         # notify the user of successful creation of account
-        flash(f'Account Created for {form.username.data}! You Can Now Login!', 'success')  # the second argument taken by the flash function indicates the type of result our message is
+        flash(f'Account Created for {form.username.data}! You Can Now Log In!', 'success')  # the second argument taken by the flash function indicates the type of result our message is
 
         return redirect(url_for('login'))
 
@@ -147,7 +147,7 @@ def login():
                 session['logged_in'] = True
                 session['username'] = username
                 cursor.close()
-                flash("You Have Successfuly Logged in", "success")
+                flash("You Have Successfully Logged In!", "success")
                 return redirect(url_for("dashboard"))
             else:  # passwords do not match
 
@@ -208,7 +208,7 @@ def changePassword():
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
     session.clear()
-    flash('You Have Logged Out', 'success')
+    flash('You Have Been Successfully Logged Out.', 'success')
     return redirect(url_for('home'))
 
 
