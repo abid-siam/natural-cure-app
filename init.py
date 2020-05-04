@@ -91,15 +91,6 @@ def dashboard():
         return redirect(url_for('home'))
 
 
-@app.route("/diagnosis")
-def diagnosis():
-    isLoggedin = False
-    if 'logged_in' in session:
-        isLoggedin = True
-    # Will contain diagnosis information
-    return render_template('diagnosis.html', title='Diagnosis', isLoggedin=isLoggedin)
-
-
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -129,7 +120,7 @@ def register():
         conn.commit()
         cursor.close()
         # notify the user of successful creation of account
-        flash(f'Account created for {form.username.data}! You can now login!', 'success')  # the second argument taken by the flash function indicates the type of result our message is
+        flash(f'Account Created for {form.username.data}! You Can Now Login!', 'success')  # the second argument taken by the flash function indicates the type of result our message is
 
         return redirect(url_for('login'))
 
@@ -162,7 +153,7 @@ def login():
                 return redirect(url_for("dashboard"))
             else:  # passwords do not match
 
-                flash('Login Unsuccessful. Please check username and password.', 'danger')
+                flash('Login Unsuccessful. Please Check Username and Password.', 'danger')
                 # we don't want to flash the password being incorrect, but just highliight it and display it as an error underneath the password field
 
             # close connection
@@ -219,9 +210,16 @@ def changePassword():
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
     session.clear()
-    flash('You have logged out', 'success')
+    flash('You Have Logged Out', 'success')
     return redirect(url_for('home'))
 
+
+@app.route("/diagnosis")
+def diagnosis():
+    if 'logged_in' in session:
+        return render_template('diagnosis.html', title='Diagnosis', isLoggedin=True)
+    else:
+        return redirect(url_for('home'))
 
 
 @app.route("/settings")
@@ -231,14 +229,44 @@ def settings():
     else:
         return redirect(url_for('home'))
 
+@app.route("/report")
+def report():
+    if 'logged_in' in session:
+        return render_template('report.html', title='Report', isLoggedin=True)
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route("/viewRecords")
+def viewRecords():
+    if 'logged_in' in session:
+        return render_template('viewRecords.html', title='View Medical Records', isLoggedin=True)
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route("/shareRecords")
+def shareRecords():
+    if 'logged_in' in session:
+        return render_template('shareRecords.html', title='Share Medical Records', isLoggedin=True)
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route("/resources")
+def resources():
+    if 'logged_in' in session:
+        return render_template('resources.html', title='Health Resources', isLoggedin=True)
+    else:
+        return redirect(url_for('home'))
+
+
 
 
 @app.route("/account", methods=['GET', 'POST'])
 def account():
     if 'logged_in' in session:
         current_user = getUser()
-        current_user.getFollowers()
-        current_user.getFollowing()
         return render_template('account.html', title='Account', isLoggedin=True, current_user=current_user)
     else:
         return redirect(url_for('home'))
