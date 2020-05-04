@@ -145,8 +145,8 @@ p{
   margin-top: 200px;
   margin: 20px;
   display: inline-block;
-  position: fixed;
-  margin-left: 100px;
+  position: absolute;
+  margin-left: 200px;
 }
 
 .media#account-pg{
