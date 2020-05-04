@@ -40,18 +40,17 @@ class LoginForm(FlaskForm):
 
 
 class UpdateUserForm(FlaskForm):
-    first_name = StringField('First Name', validators=[Length(min=1, max=20)])
-    last_name = StringField('Last Name', validators=[Length(min=1, max=20)])
-    username = StringField('Username', validators=[Length(min=2, max=20)])
-    bio = TextAreaField('Bio', validators=[Length(max=1024)])
-    avatar = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
-    isPrivate = RadioField('Account Type', choices=[('T', 'Private'), ('F', 'Public')])
+    first_name = StringField('First Name', validators=[DataRequired(), Length(min=1, max=20)])
+    last_name = StringField('Last Name', validators=[DataRequired(), Length(min=1, max=20)])
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    gender = StringField('Gender', validators=[DataRequired(), Length(min=1, max=6)])
+    email = EmailField('Email Address', validators=[DataRequired(), Email()])
     submit = SubmitField('Update')
 
     def validate_username(self, username):
         if username.data != session['username']:
             cursor = conn.cursor()
-            query = 'SELECT * FROM Person WHERE username = %s'
+            query = 'SELECT * FROM user WHERE username = %s'
             cursor.execute(query, (username.data))
             data = cursor.fetchone()
             if (data):

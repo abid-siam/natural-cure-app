@@ -236,6 +236,12 @@ def report():
     else:
         return redirect(url_for('home'))
 
+@app.route("/uploadRecords")
+def uploadRecords():
+    if 'logged_in' in session:
+        return render_template('uploadRecords.html', title='Upload Medical Records', isLoggedin=True)
+    else:
+        return redirect(url_for('home'))
 
 @app.route("/viewRecords")
 def viewRecords():
@@ -259,8 +265,6 @@ def resources():
         return render_template('resources.html', title='Health Resources', isLoggedin=True)
     else:
         return redirect(url_for('home'))
-
-
 
 
 @app.route("/account", methods=['GET', 'POST'])
@@ -306,37 +310,26 @@ def update():
     current_user = getUser()
     if 'logged_in' in session:
         if form.validate_on_submit():
-            # won't update the avatar if no data is given
             currentUsername = session['username']
             firstName = form.first_name.data
             lastName = form.last_name.data
             username = form.username.data
-            bio = form.bio.data
-            isPrivate = form.isPrivate.data
-            setPriv = 1 if isPrivate == 'T' else 0
+            gender = form.gender.data
+            email = form.email.data
             cursor = conn.cursor()
-            if form.avatar.data:
-                picture_file = save_picture(form.avatar.data)
-                update = 'UPDATE Person SET fName=%s, lName=%s, username=%s, bio=%s, avatar=%s,isPrivate=%s WHERE username=%s'
-                cursor.execute(update, (firstName, lastName, username, bio, picture_file, setPriv, currentUsername))
-            else:
-                update = 'UPDATE Person SET fName=%s, lName=%s, username=%s, bio=%s,isPrivate=%s WHERE username=%s'
-                cursor.execute(update, (firstName, lastName, username, bio, setPriv, currentUsername))
-            # update the session username
+            update = 'UPDATE user SET fName=%s, lName=%s, username=%s, gender=%s, email=%s WHERE username=%s'
+            cursor.execute(update, (firstName, lastName, username, gender, email, currentUsername))
             session['username'] = username
-            # save changes to database
             conn.commit()
             cursor.close()
-            # notify the user of successful creation of account
-            flash('Your account has been updated!', 'success')  # the second argument taken by the flash function indicates the type of result our message is
+            flash('Your Account Has Been Updated!', 'success')  
             return redirect(url_for('update'))
         if request.method == 'GET':  # fill in form with information given
             form.first_name.data = current_user.firstName
             form.last_name.data = current_user.lastName
             form.username.data = current_user.username
-            form.bio.data = current_user.bio
-            form.isPrivate.data = 'T' if current_user.isPrivate else 'F'
-
+            form.gender.data = current_user.gender
+            form.email.data = current_user.email
         return render_template('edit.html', title='Edit Account', form=form, current_user=current_user, isLoggedin=True)
     else:
         return redirect(url_for('home'))

@@ -4,10 +4,8 @@
 
 <div class="content-section">
       <div class="media">
-        <img src="{{current_user.avatar}}" alt="User avatar" class="rounded-circle" style="width: 125px; height: 125px;">
-        <p style="margin-left: 20px; font-size:20px">
-            <b><a href="/account" style="text-decoration: none; color: black;">{{current_user.username}}</a></b>
-
+        <p>
+            <b><a href="/account" style="color: black; font-size: 40px;">{{current_user.username}}</a></b>
         </p>
       </div>
         <form method="POST" action="" enctype="multipart/form-data">
@@ -55,40 +53,33 @@
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    {{ form.bio.label(class="form-control-label") }}
-                    {% if form.bio.errors %}
-                        {{ form.bio(class="form-control form-control-lg is-invalid") }}
+                    {{ form.gender.label(class="form-control-label") }}
+                    {% if form.gender.errors %}
+                        {{ form.gender(class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
-                            {% for error in form.bio.errors %}
+                            {% for error in form.gender.errors %}
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
-                        {{ form.bio(class="form-control form-control-lg") }}
+                        {{ form.gender(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
+     
                 <div class="form-group">
-                    {{ form.avatar.label() }}
-                    {{ form.avatar(class="form-control-file") }}
-                    {% if form.avatar.errors %}
-                        {% for error in form.avatar.errors %}
-                            <span class="text-danger">{{ error }}</span></br>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.isPrivate.label(class="form-control-label")}}
-                    {% if form.isPrivate.errors %}
-                        {{ form.isPrivate(class="form-control form-control-lg is-invalid")}}
+                    {{ form.email.label(class="form-control-label")}}
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg is-invalid")}}
                         <div class="invalid-feedback">
-                            {% for error in form.isPrivate.errors %}
+                            {% for error in form.email.errors %}
                                 <span> {{ error }} </span>
                             {% endfor %}
                         </div>
                     {% else %}
-                        {{ form.isPrivate}} <!-- input field is valid -->
+                        {{ form.email(class="form-control form-control-lg")}} 
                     {% endif %}
                 </div>
+                
             </fieldset>
 
             <div class="form-group">

@@ -3,7 +3,7 @@
 {% block content %}
 
         <div class="user-info-small">
-              <p style="color: black; font-size: 30px;">
+              <p style="font-size: 30px;">
                 <b>{{current_user.username}}</b>
               </p>
 
@@ -13,6 +13,7 @@
                   <i class="fa fa-caret-down"></i>
                 </button>
                     <div class="dropdown-container">
+                      <a href="/uploadRecords">Upload Medical Records</a>
                       <a href="/viewRecords">View Medical Records</a>
                       <a href="/shareRecords">Share Medical Records</a>
                     </div>
