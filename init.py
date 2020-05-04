@@ -215,7 +215,7 @@ def logout():
 @app.route("/diagnosis")
 def diagnosis():
     if 'logged_in' in session:
-        return render_template('diagnosis.html', title='Diagnosis', isLoggedin=True)
+        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True)
     else:
         return redirect(url_for('home'))
 
