@@ -1,8 +1,9 @@
 import pymysql.cursors
 
 conn = pymysql.connect(host='localhost',
+                       port= 8889,
                        user='root',
-                       password='',
-                       db='natural_cure',
+                       password='root',
+                       db='natural-cure-app',
                        charset='utf8mb4',
                        cursorclass=pymysql.cursors.DictCursor)

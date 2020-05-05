@@ -1,7 +1,8 @@
-
 import os
 import time
 import datetime
+from datetime import date
+from infermedica import *
 import secrets
 from flask import Flask
 from PIL import Image
@@ -274,6 +275,45 @@ def account():
         return render_template('account.html', title='Account', isLoggedin=True, current_user=current_user)
     else:
         return redirect(url_for('home'))
+    
+def calcAge(birth,today):
+    return today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
+
+def stringFromSympt(sympt):
+    returnStr = ""
+    for i in range(len(sympt)):
+        if i == (len(sympt)-1):
+            returnStr += str(sympt[i])
+        else:
+            returnStr = returnStr + str(sympt[i]) + ", "
+            returnStr += " "
+    return returnStr
+
+#Displays the results of the diagnosis
+@app.route('/diagnosisReport', methods=['GET', 'POST'])
+def diagnosisReport():
+    api= infermedica_api.API(app_id='52457f85', app_key='95f03f5398a3b0358795540117d4f376')
+    symptDesc = request.form["Symptoms"]
+    currUser = getUser()
+    currAge = calcAge(currUser.dob,date.today())
+    gendAge = (currUser.gender.lower(),str(currAge))
+    req = diagnose(api,gendAge,parser(api,str(symptDesc)))
+    lstIll = conditions(req[0])
+    lstSympt = req[1]
+    strSympt = stringFromSympt(lstSympt)
+    if (lstIll[0] == "" and lstIll[1] == "" and lstIll[2] == ""):
+        #if no conditions were found, more symptoms are needed
+        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True, reattempt="No illnesses were discovered, please enter more symptoms")
+    cursor = conn.cursor()
+    ins = 'INSERT INTO diagnosis(username,symptoms,illness,illness2,illness3) VALUES(%s,%s,%s,%s,%s)'
+    cursor.execute(ins, (currUser.username, strSympt, lstIll[0], lstIll[1], lstIll[2]))
+    conn.commit()
+    cursor.close()
+    if req != None:
+        return render_template('results.html', name = currUser.firstName, gender = currUser.gender, age = currAge, diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2])
+    else:
+        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True, reattempt="No Symptoms were found, please ")
+    
 
 
 def save_picture(form_picture):
