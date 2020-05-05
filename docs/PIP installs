@@ -1,3 +1,4 @@
 pip install wtforms[email]
 pip install infermedica_api
 pip install Pillow
+pip install pdfkit
