@@ -313,8 +313,6 @@ def diagnosisReport():
     data = cursor.fetchone()
     #The corresponding Illness to Treatment
     #data[remedy] will return the corresponding treatment
-    print(data["illness"])
-    print(data["remedy"])
     strRemedy = data["illness"] + ": " + data["remedy"]
     conn.commit()
     cursor.close()
