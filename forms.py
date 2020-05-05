@@ -66,3 +66,6 @@ class ChangePassForm(FlaskForm):
     newPassword = PasswordField('New Password', validators=[DataRequired(), Length(min=8)])
     confirmNewPass = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('newPassword')])
     submit = SubmitField('Confirm')
+
+class SubscribeForm(FlaskForm):
+    pass

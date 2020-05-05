@@ -1,0 +1,12 @@
+<html>
+    <body>
+        <form method="POST" action="/generateReport">
+            <input type="text" name="timestamp" placeholder="Enter a timestamp" required/>
+            <br>
+            <input type="submit" value="Submit" />
+            {% if error %}
+                <p><strong>Error: {{error}}</strong</p>
+            {% endif %}
+        </form>
+    </body>
+</html>
