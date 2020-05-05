@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS `user`;
+
 CREATE TABLE IF NOT EXISTS `user`(
     username VARCHAR(20),
     password CHAR(64),
@@ -18,7 +18,6 @@ CREATE TABLE IF NOT EXISTS `user`(
 );
 
 -- login /admin to manage users and subscriptions 
-DROP TABLE IF EXISTS `administrator`;
 CREATE TABLE IF NOT EXISTS `administrator`( 
     username VARCHAR(20),
     password CHAR(64),
@@ -29,14 +28,13 @@ CREATE TABLE IF NOT EXISTS `administrator`(
 );
 
 -- row created after a diagnosis session
-DROP TABLE IF EXISTS `treatment`;
 CREATE TABLE IF NOT EXISTS `treatment`(
     illness VARCHAR(128),
     remedy VARCHAR(1024),
 	PRIMARY KEY(illness)
 );
 
-DROP TABLE IF EXISTS `diagnosis`;
+
 CREATE TABLE IF NOT EXISTS `diagnosis`(
     recordID int NOT NULL AUTO_INCREMENT,
     username VARCHAR(20), -- user that initiates the diagnosis 
@@ -49,7 +47,6 @@ CREATE TABLE IF NOT EXISTS `diagnosis`(
 
 
 -- row created after api returns diagnosis and treatment is chosen
-DROP TABLE IF EXISTS `condition`;
 CREATE TABLE IF NOT EXISTS `condition`(
     recordID int, -- corresponds to a diagnosis made 
     conditionID VARCHAR(10), -- corresponds to the output condition id from the api 
