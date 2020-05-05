@@ -170,7 +170,7 @@ def changePassword():
     # should be logged in already
     # user enters current password
     if 'logged_in' in session:
-        form = changePassForm()
+        form = ChangePassForm()
         if form.validate_on_submit():
             # get information from form
             currentPass = form.currentPass.data
@@ -247,9 +247,22 @@ def uploadRecords():
 @app.route("/viewRecords")
 def viewRecords():
     if 'logged_in' in session:
+        # fetch the records for the user 
+        current_user = getUser()
+        cursor = conn.cursor()
+
         return render_template('viewRecords.html', title='View Medical Records', isLoggedin=True)
     else:
         return redirect(url_for('home'))
+
+@app.route("/insertData") # testing purposes 
+def insertData():
+    if 'logged_in' in session:
+        current_user = getUser()
+        if request.form:
+            username = current_user.username
+            symptoms = request.form['symptoms']
+
 
 
 @app.route("/shareRecords")
