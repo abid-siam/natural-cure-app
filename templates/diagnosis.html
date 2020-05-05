@@ -1,4 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
 
+{{reattempt}}
+<fieldset class="form-group">
+    <legend style="text-align: center;"> Please provide a description of your symptoms</legend>
+        <form action="/diagnosisReport" method="POST">
+	    <textarea name="Symptoms" rows="10" cols="100">Enter a detailed description of your symptoms</textarea>
+            <br>
+        <input type ="submit">
+    </form>
+</fieldset>
 {% endblock content %}

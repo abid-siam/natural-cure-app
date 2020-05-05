@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+<HTML>
+    
+<h1>Hello {{name}}! These are your results!</h1>
+
+<br> 
+Gender: {{gender}}
+<br>
+Age: {{age}}
+
+<br><br>
+
+<h2>Illness:</h2>
+<b>Most Likely:</b> <br> 
+{{diagOne}}
+
+<br><br>
+
+<b>Lesser Likely:</b> 
+<br>
+{{diagTwo}} 
+<br>
+{{diagThree}} 
+
+<br> <br>
+
+<h2>Treatments:</h2>
+{{treatments}}
+
+</HTML>
+{% endblock content %}

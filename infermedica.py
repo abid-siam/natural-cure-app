@@ -10,39 +10,43 @@ def parser(api, userSymptoms):
 
 #add symptoms to request
 def addSympt(request, sympt):
+    symptList = []
     for i in sympt:
+        symptList.append(i.id)
+        print(i)
         if i ==sympt[0]:
             request.add_symptom(i.id,i.choice_id,initial = True)
-        request.add_symptom(i.id,i.choice_id)
+        else:
+            request.add_symptom(i.id,i.choice_id)
+    return symptList
 
 #Parameters are api, (sex,age), user symptoms after parse
 def diagnose(api, patientBasic, sympt):
     request = infermedica_api.Diagnosis(sex = patientBasic[0],age = patientBasic[1])
-    addSympt(request, sympt)
+    lstSympt = addSympt(request, sympt)
     request = api.diagnosis(request)
-    return request
+    return [request,lstSympt]
 
 #returns a list of the 3 most probable conditions based on diagnosis 
 def conditions(request):
     cond = request.conditions[:3]
     condNames = []
-    for i in range(3):
+    for i in range(len(cond)):
         condNames.append(cond[i]["name"])
+    condNames.append("")
+    condNames.append("")
+    condNames.append("")
     return condNames
         
 #User Response is a list of tuples with (s_id,response)
 #def questionHandler(request,userResponse):
 
-def main():
-    api= infermedica_api.API(app_id='52457f85', app_key='95f03f5398a3b0358795540117d4f376')
+#def main():
+    #api= infermedica_api.API(app_id='52457f85', app_key='95f03f5398a3b0358795540117d4f376')
     #user answers question
-    request = diagnose(api,("female","35"),parser(api,'i feel stomach pain but no couoghing today'))
-    #returns list of top 3 most probable conditions
-    print(conditions(request))
+    #request = diagnose(api,("female","35"),parser(api,'i feel stomach pain but no couoghing today'))
     
-main()
-    
-    
+
     
     
     
