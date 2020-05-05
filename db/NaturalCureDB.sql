@@ -29,17 +29,24 @@ CREATE TABLE IF NOT EXISTS `administrator`(
 );
 
 -- row created after a diagnosis session
+DROP TABLE IF EXISTS `treatment`;
+CREATE TABLE IF NOT EXISTS `treatment`(
+    illness VARCHAR(128),
+    remedy VARCHAR(1024),
+	PRIMARY KEY(illness)
+);
+
 DROP TABLE IF EXISTS `diagnosis`;
 CREATE TABLE IF NOT EXISTS `diagnosis`(
     recordID int NOT NULL AUTO_INCREMENT,
     username VARCHAR(20), -- user that initiates the diagnosis 
     symptoms VARCHAR(1024), -- comma seperated string containing symptom_ids provided by the user 
     illness VARCHAR(128),
-    illness2 VARCHAR(128),
-    illness3 VARCHAR(128),
+    
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY(recordID)
 );
+
 
 -- row created after api returns diagnosis and treatment is chosen
 DROP TABLE IF EXISTS `condition`;

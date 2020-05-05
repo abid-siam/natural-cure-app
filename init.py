@@ -298,6 +298,8 @@ def diagnosisReport():
     currAge = calcAge(currUser.dob,date.today())
     gendAge = (currUser.gender.lower(),str(currAge))
     req = diagnose(api,gendAge,parser(api,str(symptDesc)))
+    if req == None:
+        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True, reattempt="No symptoms, please provide further details")
     lstIll = conditions(req[0])
     lstSympt = req[1]
     strSympt = stringFromSympt(lstSympt)
@@ -307,14 +309,16 @@ def diagnosisReport():
     cursor = conn.cursor()
     ins = 'INSERT INTO diagnosis(username,symptoms,illness,illness2,illness3) VALUES(%s,%s,%s,%s,%s)'
     cursor.execute(ins, (currUser.username, strSympt, lstIll[0], lstIll[1], lstIll[2]))
+    query = cursor.execute("SELECT * FROM treatment WHERE illness = %s", lstIll[0])
+    data = cursor.fetchone()
+    #The corresponding Illness to Treatment
+    #data[remedy] will return the corresponding treatment
+    print(data["illness"])
+    print(data["remedy"])
+    strRemedy = data["illness"] + ": " + data["remedy"]
     conn.commit()
     cursor.close()
-    if req != None:
-        return render_template('results.html', name = currUser.firstName, gender = currUser.gender, age = currAge, diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2])
-    else:
-        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True, reattempt="No Symptoms were found, please ")
-    
-
+    return render_template('results.html', name = currUser.firstName, gender = currUser.gender, age = currAge, diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2], treatments = strRemedy)
 
 def save_picture(form_picture):
 
