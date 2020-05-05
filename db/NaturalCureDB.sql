@@ -34,6 +34,9 @@ CREATE TABLE IF NOT EXISTS `diagnosis`(
     recordID int NOT NULL AUTO_INCREMENT,
     username VARCHAR(20), -- user that initiates the diagnosis 
     symptoms VARCHAR(1024), -- comma seperated string containing symptom_ids provided by the user 
+    illness VARCHAR(128),
+    illness2 VARCHAR(128),
+    illness3 VARCHAR(128),
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY(recordID)
 );
