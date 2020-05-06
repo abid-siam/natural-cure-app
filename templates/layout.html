@@ -78,12 +78,29 @@
           'order': [[2, 'desc']]
         });
       $('.dataTables_length').addClass('bs-select'); 
+    
+      $('input[type="text"],textarea').on('keyup',function() {
+          var textarea_value = $("#symptoms").val();
+          var text_value = $('input[name="textField"]').val();
+          
+          if(textarea_value != '' && text_value != '') {
+              $('#diagnose').attr('disabled', false);
+          } else {
+              $('#diagnose').attr('disabled', true);
+          }
+    });
       });
       var confirmDelete = function(btn, documentID){
           var result = confirm("Are you sure you want to delete this file?");
           if (result) {
               deleteRow(btn, documentID);
           }
+      }
+      function startDiagnosis() {
+        var terms_div = document.getElementById("intro-prompt");
+        var input_div = document.getElementById("input-symptoms");
+        terms_div.style.display = "none";
+        input_div.style.display = "block";
       }
       function deleteRow(btn, documentID) {
           var row = btn.parentNode.parentNode;

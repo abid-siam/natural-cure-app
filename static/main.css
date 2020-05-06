@@ -131,6 +131,20 @@ p{
   width: 90%;
 }
 
+.intro-prompt{
+  max-width: 650px;
+  min-width: 500px;
+  margin: 40px auto;
+  width: 70%;
+}
+
+.input-symptoms{
+  max-width: 650px;
+  min-width: 500px;
+  margin: 40px auto;
+  width: 70%;
+}
+
 #message{
   width: 50%;
   max-width: 500px;

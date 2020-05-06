@@ -1,13 +1,39 @@
 {% extends "layout.html" %}
 {% block content %}
 
+
+<div class="intro-prompt" id="intro-prompt">
+    <h3>Terms of Service </h3>
+    <p style="text-align: left;">Before starting the diagnosis, please read the Terms of Service. Remember that:</p>
+    <ul style="margin-top: 20px;">
+        <li>
+            <strong>The diagnosis is intended for informational pursposes.</strong> Please consult with a medical professional before making further decisions. 
+        </li>
+        <li style="margin-top: 20px;">
+            <strong>Do not use in emergencies.</strong> In case of an emergency, visit a hospital or call your local emergency number immediately. 
+        </li>
+        <li style="margin-top: 20px;">
+            <strong>Your data is safe.</strong> Information that you provide is secured and not shared with anyone.
+        </li>
+    </ul>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="accept-terms" onchange="document.getElementById('start').disabled = !this.checked;">
+        <label class="form-check-label" for="accept-terms">
+          I read and accept the <strong>Terms of Service.</strong>
+        </label>
+    </div>
+    <button style="margin-top: 15px;" id="start" type="button" disabled='disabled' onclick="startDiagnosis()" class="btn btn-primary">Start Diagnosis</button>
+</div>
+
 {{reattempt}}
-<fieldset class="form-group">
-    <legend style="text-align: center;"> Please provide a description of your symptoms</legend>
-        <form action="/diagnosisReport" method="POST">
-	    <textarea name="Symptoms" rows="10" cols="100">Enter a detailed description of your symptoms</textarea>
-        <br>
-        <input type ="submit">
-    	</form>
-</fieldset>
+<div class="input-symptoms" style="display:none" id="input-symptoms">
+    <fieldset class="form-group">
+        <legend>Please provide a description of your symptoms</legend>
+            <form action="/diagnosisReport" method="POST">
+            <textarea class="form-control" id="symptoms" placeholder="e.g. I have a headache..." name="Symptoms" rows=10 style="width: 100%;"></textarea>
+            <br>
+            <input type="submit" id="diagnose" disabled='disabled' class="btn btn-primary" value="Diagnose">
+            </form>
+    </fieldset>
+</div>
 {% endblock content %}

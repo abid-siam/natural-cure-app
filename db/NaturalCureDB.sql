@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS `user`(
     username VARCHAR(20),
     password CHAR(64),
