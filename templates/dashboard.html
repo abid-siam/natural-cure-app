@@ -5,6 +5,7 @@
         <b>{{current_user.username}}</b>
       </p>
 
+<<<<<<< HEAD
     <div class="vertical-menu">
         <a href="/diagnosisHistory">Diagnosis and Treatment History</a>
         <button class="dropdown-btn">Medical Records
@@ -15,6 +16,25 @@
               <a href="/viewRecords">View Medical Records</a>
               <a href="/shareRecords">Share Medical Records</a>
               <a href="/insertData">Insert some test data</a>
+=======
+        <div class="user-info-small">
+              <p style="font-size: 30px;">
+                <b>{{current_user.username}}</b>
+              </p>
+
+            <div class="vertical-menu">
+                <a href="/report">User Diagnosis & Treatment History</a>
+                <button class="dropdown-btn">Medical Records
+                  <i class="fa fa-caret-down"></i>
+                </button>
+                    <div class="dropdown-container">
+                      <a href="/uploadRecords">Upload Medical Records</a>
+                      <a href="/viewRecords">View Medical Records</a>
+                      <a href="/shareRecords">Share Medical Records</a>
+                      <a href="/insertData">Insert some test data</a>
+                    </div>
+                <a href="/resources">Health Resources</a>
+>>>>>>> 84126968eac173547c3170326b4bed6e677f4895
             </div>
         <a href="/resources">Health Resources</a>
     </div>

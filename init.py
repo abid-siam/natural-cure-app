@@ -259,14 +259,6 @@ def logout():
     return redirect(url_for('home'))
 
 
-@app.route("/diagnosis")
-def diagnosis():
-    if 'logged_in' in session:
-        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True)
-    else:
-        return redirect(url_for('home'))
-
-
 @app.route("/settings")
 def settings():
     if 'logged_in' in session:
@@ -361,6 +353,14 @@ def account():
         return render_template('account.html', title='Account', isLoggedin=True, current_user=current_user)
     else:
         return redirect(url_for('home'))
+
+@app.route("/diagnosis")
+def diagnosis():
+    if 'logged_in' in session:
+        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True)
+    else:
+        return redirect(url_for('home'))
+
     
 def calcAge(birth,today):
     return today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
