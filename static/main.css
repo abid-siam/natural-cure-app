@@ -124,7 +124,12 @@ p{
   width: 50%;
 }
 
-
+.data-table{
+  max-width: 800px;
+  min-width: 500px;
+  margin: 40px auto;
+  width: 90%;
+}
 
 #message{
   width: 50%;
@@ -256,6 +261,13 @@ table.dataTable thead .sorting_desc:before,
 table.dataTable thead .sorting_desc_disabled:after,
 table.dataTable thead .sorting_desc_disabled:before {
 bottom: .5em;
+}
+
+.diagnosisResults{
+  margin-top: 20px;
+  margin-left: 40px;
+  margin-right: 20px;
+  margin-bottom: 30px;
 }
 
 

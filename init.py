@@ -83,7 +83,8 @@ def home():
 def dashboard():
     if 'logged_in' in session:
         current_user = getUser()
-        return render_template('dashboard.html', title='Dashboard', current_user=current_user, isLoggedin=True)
+        return render_template('dashboard.html', title='Dashboard', 
+            current_user=current_user, isLoggedin=True)
     else:
         return redirect(url_for('home'))
 
@@ -95,7 +96,8 @@ def register():
     form = RegistrationForm()
     isLoggedin = False
     if request.method == 'POST':
-        if form.validate_on_submit():  # the function validate_on_submit() is a member function of FlaskForm
+        if form.validate_on_submit():  
+            # the function validate_on_submit() is a member function of FlaskForm
             # check that the user information doesn't already exist
             firstName = form.first_name.data
             lastName = form.last_name.data
@@ -112,8 +114,11 @@ def register():
             # create and execute query
             cursor = conn.cursor()
             ins = 'INSERT INTO user(fname,lname,username,gender,password,addr_street,addr_city,\
-            addr_state, addr_zip, email, dob, subscribed, mfaEnabled) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,0,0)'
-            cursor.execute(ins, (firstName, lastName, username, gender, password_hashed, addr_street, addr_city, addr_state, addr_zip, email, dob))
+            addr_state, addr_zip, email, dob, subscribed, mfaEnabled) \
+            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,0,0)'
+            cursor.execute(ins, (firstName, lastName, username, gender, 
+                password_hashed, addr_street, addr_city, addr_state, addr_zip, 
+                email, dob))
             # save changes to database
             conn.commit()
             cursor.close()
@@ -154,7 +159,8 @@ def login():
             else:  # passwords do not match
 
                 flash('Login Unsuccessful. Please Check Username and Password.', 'danger')
-                # we don't want to flash the password being incorrect, but just highliight it and display it as an error underneath the password field
+                # we don't want to flash the password being incorrect, 
+                # but just highliight it and display it as an error underneath the password field
 
             # close connection
             cursor.close()
@@ -232,7 +238,8 @@ def report():
 @app.route("/uploadRecords")
 def uploadRecords():
     if 'logged_in' in session:
-        return render_template('uploadRecords.html', title='Upload Medical Records', isLoggedin=True)
+        return render_template('uploadRecords.html', title='Upload Medical Records', 
+            isLoggedin=True)
     else:
         return redirect(url_for('home'))
 
@@ -277,7 +284,8 @@ def resources():
 def account():
     if 'logged_in' in session:
         current_user = getUser()
-        return render_template('account.html', title='Account', isLoggedin=True, current_user=current_user)
+        return render_template('account.html', title='Account', isLoggedin=True, 
+            current_user=current_user)
     else:
         return redirect(url_for('home'))
 
@@ -312,13 +320,15 @@ def diagnosisReport():
     gendAge = (currUser.gender.lower(),str(currAge))
     req = diagnose(api,gendAge,parser(api,str(symptDesc)))
     if req == None:
-        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True, reattempt="No symptoms, please provide further details")
+        return render_template('diagnosis.html', title='Diagnosis & Treatment', 
+            isLoggedin=True, reattempt="No symptoms, please provide further details")
     lstIll = conditions(req[0])
     lstSympt = req[1]
     strSympt = stringFromSympt(lstSympt)
     if (lstIll[0] == "" and lstIll[1] == "" and lstIll[2] == ""):
         #if no conditions were found, more symptoms are needed
-        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True, reattempt="No illnesses were discovered, please enter more symptoms")
+        return render_template('diagnosis.html', title='Diagnosis & Treatment', 
+            isLoggedin=True, reattempt="No illnesses were discovered, please enter more symptoms")
     cursor = conn.cursor()
     ins = 'INSERT INTO diagnosis(username,symptoms,illness,illness2,illness3) VALUES(%s,%s,%s,%s,%s)'
     cursor.execute(ins, (currUser.username, strSympt, lstIll[0], lstIll[1], lstIll[2]))
@@ -326,10 +336,15 @@ def diagnosisReport():
     data = cursor.fetchone()
     #The corresponding Illness to Treatment
     #data[remedy] will return the corresponding treatment
-    strRemedy = data["illness"] + ": " + data["remedy"]
-    conn.commit()
-    cursor.close()
-    return render_template('results.html', name = currUser.firstName, gender = currUser.gender, age = currAge, diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2], treatments = strRemedy)
+    strRemedy = "No natural treatment for the above diagnosis exists in our database\
+     at this moment. Please consult your primary care physician or check our Health Resources \
+     page for further information. Thank you."
+    if data:
+        strRemedy = data["remedy"]
+        conn.commit()
+        cursor.close()
+    return render_template('results.html', name = currUser.firstName, gender = currUser.gender, age = currAge, 
+        diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2], treatments = strRemedy)
 
 def save_picture(form_picture):
 
@@ -399,7 +414,8 @@ def update():
             else:
                 flash('Please Check the Errors Below.', 'danger')
 
-        return render_template('edit.html', title='Edit Account', form=form, current_user=current_user, isLoggedin=True)
+        return render_template('edit.html', title='Edit Account', form=form, 
+            current_user=current_user, isLoggedin=True)
     else:
         return redirect(url_for('home'))
 

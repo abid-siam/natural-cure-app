@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="data-table">
+    <h3 style="text-align: center">Your Diagnosis History</h3>
+    {% if records %}
+    <form id="reportOnSubmit" method="POST" action="/generateReport">
+        Select from the table below <br>
+        <button class="btn btn-primary" type="submit" id="report" disabled="disabled">Create Report</button>
+        <table id="viewRecordsTable" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+            <thead style="font-weight: bold">
+            <tr>
+                <th></th>
+                <th>Diagnosis Time</th>
+                <th>Symptoms Reported</th>
+                <th>Conditions Predicted</th>
+                <th>Treatment Options</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td><input type="checkbox" name="checked" value="{{record.timestamp}}" class="check"/></td>
+                    <td>{{record.timestamp}}</td>
+                    <td>{{record.symptoms}}</td>
+                    <td>
+                        <table class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                <th class="th-sm">Condition</th>
+                                <th class="th-sm">Probability</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for diagnosis in record.conditions %}
+                                    <tr>
+                                        {% set percent = diagnosis.probability * 100 %}
+                                        <td>{{diagnosis.condition}}</td>
+                                        <td>{{'%.2f'|format(percent)}}%</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        <table class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                <th class="th-sm">Condition</th>
+                                <th class="th-sm">Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for diagnosis in record.treatment %}
+                                    <tr>
+                                        <td>{{diagnosis.condition}}</td>
+                                        <td>{{diagnosis.options}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th>Diagnosis Time</th>
+                    <th>Symptoms Reported</th>
+                    <th>Conditions Predicted</th>
+                    <th>Treatment Options</th>
+                </tr>
+            </tfoot>
+        </table>
+    </form>
+</div>
+    {% else %}
+    You have no records in the system
+    {% endif %}
+{% endblock content %}
+<script>
+    $(document).ready(function() {
+    var table = $('#viewRecordsTable').DataTable({     
+      'columnDefs': [
+         {
+            'targets': 0,
+            'checkboxes': {
+               'selectRow': true
+            }
+         }
+      ],
+      'select': {
+         'style': 'multi'
+      },
+      'order': [[0, 'desc']]
+   });
+   $('.dataTables_length').addClass('bs-select');
+   // Handle form submission event 
+//    $('#reportOnSubmit').on('submit', function(e){
+//       var form = this;
+      
+//       var rows_selected = table.column(0).checkboxes.selected();
+
+//       // Iterate over all selected checkboxes
+//       $.each(rows_selected, function(index, rowId){
+//          // Create a hidden element 
+//          $(form).append(
+//              $('<input>')
+//                 .attr('type', 'hidden')
+//                 .attr('name', 'id[]')
+//                 .val(rowId)
+//          );
+//       });
+//    });   
+
+});
+$('.check').change(function() {
+    if ($('.check:checked').length) {
+        $('#report').removeAttr('disabled');
+    } else {
+        $('#report').attr('disabled', 'disabled');
+    }
+});
+</script>

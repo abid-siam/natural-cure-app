@@ -1,24 +1,26 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container">
-	<div class="row">
-		<input type="hidden" name="count" value="1" />
-        <div class="control-group" id="fields">
-            <label class="control-label" for="field1">What symptoms are you experiencing?</label>
-            <div class="controls" id="profs"> 
-                <form class="input-append" method="POST" action="/insertData">
-                    <div id="symptoms">
-                        <input autocomplete="off" class="input" id="field1" name="prof1" type="text" placeholder="Type something" data-items="8"/>
-                        <button id="b1" class="btn add-more" type="button">+</button>
-                    </div>
-                    <input type="submit" value="Diagnose"/>
-                </form>
-                <small>Use the + button to add multiple symptoms</small>
-            <br>
+<form method="POST" action="">
+    <div class="container">
+        <div class="row">
+            <input type="hidden" name="count" value="1" />
+            <div class="control-group" id="fields">
+                <label class="control-label" for="field1">What symptoms are you experiencing?</label>
+                <div class="controls" id="profs"> 
+                    <form class="input-append" method="POST" action="/insertData">
+                        <div id="symptoms">
+                            <input autocomplete="off" class="input" id="field1" name="prof1" type="text" placeholder="Type something" data-items="8"/>
+                            <button id="b1" class="btn add-more" type="button">+</button>
+                        </div>
+                        <input type="submit" value="Diagnose"/>
+                    </form>
+                    <small>Use the + button to add multiple symptoms</small>
+                <br>
+                </div>
             </div>
         </div>
-	</div>
-</div>
+    </div>
+</form>
 {% endblock content %}
 <script>
     $(document).ready(function(){
