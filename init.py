@@ -260,13 +260,6 @@ def logout():
     return redirect(url_for('home'))
 
 
-@app.route("/diagnosis")
-def diagnosis():
-    if 'logged_in' in session:
-        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True)
-    else:
-        return redirect(url_for('home'))
-
 
 @app.route("/settings")
 def settings():
@@ -279,7 +272,7 @@ def settings():
 @app.route("/diagnosisHistory", methods=['GET', 'POST'])
 def diagnosisHistory():
     if 'logged_in' in session:
-        return render_template('diagnosisHistory.html', title='Diagnosis History', isLoggedin=True)
+        return render_template('diagnosisHistory.html', title='History', isLoggedin=True)
     else:
         return redirect(url_for('home'))
 
@@ -300,7 +293,7 @@ def uploadRecords():
             cursor.execute(ins, (current_user.username, filename, description, timestamp))
             conn.commit()
             cursor.close()
-            flash('Your document has been uploaded!', 'success')
+            flash('Your Document Has Been Successfully Uploaded!', 'success')
             return redirect(url_for('uploadRecords'))
         return render_template('uploadRecords.html', title='Upload Medical Records', isLoggedin=True, form=form)
     else:
@@ -318,7 +311,7 @@ def viewRecords():
             delete = 'DELETE FROM document WHERE documentID = %s'
             cursor.execute(delete, (documentID))
             conn.commit()
-            flash('The selected file has been removed', 'success')
+            flash('The Selected File Has Been Removed.', 'success')
             return redirect(url_for('viewRecords'))
         # fetch documents for the user 
         query = 'SELECT documentID, filePath, description, timestamp FROM document WHERE documentOwner = %s'
@@ -377,13 +370,15 @@ def diagnosisReport():
     gendAge = (currUser.sex.lower(),str(currAge))
     req = diagnose(api,gendAge,parser(api,str(symptDesc)))
     if req == None:
-        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True, reattempt="No symptoms, please provide further details")
+        flash('The symptoms you entered could not be recognized. Please try again.', 'danger')
+        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True)
     lstIll = conditions(req[0])
     lstSympt = req[1]
     strSympt = stringFromSympt(lstSympt)
     if (lstIll[0] == "" and lstIll[1] == "" and lstIll[2] == ""):
         #if no conditions were found, more symptoms are needed
-        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True, reattempt="No illnesses were discovered, please enter more symptoms")
+        flash('The symptoms you entered could not be recognized. Please try again.', 'danger')
+        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True)
     cursor = conn.cursor()
     ins = 'INSERT INTO diagnosis(username,symptoms,illness,illness2,illness3) VALUES(%s,%s,%s,%s,%s)'
     cursor.execute(ins, (currUser.username, strSympt, lstIll[0], lstIll[1], lstIll[2]))
@@ -400,6 +395,15 @@ def diagnosisReport():
         cursor.close()
     return render_template('results.html', name = currUser.firstName, sex = currUser.sex, age = currAge,
      diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2], treatments = strRemedy)
+
+
+@app.route("/diagnosis")
+def diagnosis():
+    if 'logged_in' in session:
+        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True)
+    else:
+        return redirect(url_for('home'))
+
 
 def save_picture(form_picture): # profile picture 
     random_hex = secrets.token_hex(8)
