@@ -1,3 +1,4 @@
+
 CREATE TABLE IF NOT EXISTS `user`(
     username VARCHAR(20),
     password CHAR(64),
@@ -33,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `treatment`(
 	PRIMARY KEY(illness)
 );
 
-DROP TABLE IF EXISTS `diagnosis`;
+
 CREATE TABLE IF NOT EXISTS `diagnosis`(
     recordID int NOT NULL AUTO_INCREMENT,
     username VARCHAR(20), -- user that initiates the diagnosis 

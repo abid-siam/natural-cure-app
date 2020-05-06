@@ -263,7 +263,7 @@ def logout():
 @app.route("/diagnosis")
 def diagnosis():
     if 'logged_in' in session:
-        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True)
+        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True)
     else:
         return redirect(url_for('home'))
 
@@ -377,13 +377,13 @@ def diagnosisReport():
     gendAge = (currUser.sex.lower(),str(currAge))
     req = diagnose(api,gendAge,parser(api,str(symptDesc)))
     if req == None:
-        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True, reattempt="No symptoms, please provide further details")
+        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True, reattempt="No symptoms, please provide further details")
     lstIll = conditions(req[0])
     lstSympt = req[1]
     strSympt = stringFromSympt(lstSympt)
     if (lstIll[0] == "" and lstIll[1] == "" and lstIll[2] == ""):
         #if no conditions were found, more symptoms are needed
-        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True, reattempt="No illnesses were discovered, please enter more symptoms")
+        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True, reattempt="No illnesses were discovered, please enter more symptoms")
     cursor = conn.cursor()
     ins = 'INSERT INTO diagnosis(username,symptoms,illness,illness2,illness3) VALUES(%s,%s,%s,%s,%s)'
     cursor.execute(ins, (currUser.username, strSympt, lstIll[0], lstIll[1], lstIll[2]))
@@ -391,10 +391,15 @@ def diagnosisReport():
     data = cursor.fetchone()
     #The corresponding Illness to Treatment
     #data[remedy] will return the corresponding treatment
-    strRemedy = data["illness"] + ": " + data["remedy"]
-    conn.commit()
-    cursor.close()
-    return render_template('results.html', name = currUser.firstName, sex = currUser.sex, age = currAge, diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2], treatments = strRemedy)
+    strRemedy = "No natural treatment for the above diagnosis exists in our database\
+     at this moment. Please consult your primary care physician or check our Health Resources \
+     page for further information. Thank you."
+    if data:
+        strRemedy = data["remedy"]
+        conn.commit()
+        cursor.close()
+    return render_template('results.html', name = currUser.firstName, sex = currUser.sex, age = currAge,
+     diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2], treatments = strRemedy)
 
 def save_picture(form_picture): # profile picture 
     random_hex = secrets.token_hex(8)
@@ -417,7 +422,6 @@ def update():
             form.first_name.data = current_user.firstName
             form.last_name.data = current_user.lastName
             form.username.data = current_user.username
-            form.sex.data = current_user.sex
             form.email.data = current_user.email
             form.addr_street.data = current_user.addr_street
             form.addr_city.data = current_user.addr_city
@@ -429,16 +433,15 @@ def update():
                 firstName = form.first_name.data
                 lastName = form.last_name.data
                 username = form.username.data
-                sex = form.sex.data
                 email = form.email.data
                 addr_street = form.addr_street.data
                 addr_city = form.addr_city.data
                 addr_state = form.addr_state.data
                 addr_zip = form.addr_zip.data
                 cursor = conn.cursor()
-                update = 'UPDATE user SET fName=%s, lName=%s, username=%s, sex=%s, email=%s, \
+                update = 'UPDATE user SET fName=%s, lName=%s, username=%s, email=%s, \
                     addr_street=%s, addr_city=%s, addr_state=%s, addr_zip=%s WHERE username=%s'
-                cursor.execute(update, (firstName, lastName, username, sex, email, addr_street,
+                cursor.execute(update, (firstName, lastName, username, email, addr_street,
                     addr_city, addr_state, addr_zip, currentUsername))
                 session['username'] = username
                 conn.commit()

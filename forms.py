@@ -43,7 +43,6 @@ class UpdateUserForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=1, max=20)])
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=1, max=20)])
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
-    sex = language = SelectField('Sex', choices=[('male', 'Male'), ('female', 'Female')], validators=[DataRequired()])
     email = EmailField('Email Address', validators=[DataRequired(), Email()])
     addr_street = StringField('Address--Street', validators=[DataRequired(), Length(min=1, max=50)])
     addr_city = StringField('Address--City', validators=[DataRequired(), Length(min=1, max=25)])

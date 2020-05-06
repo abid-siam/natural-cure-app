@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="data-table">
-    <h3 style="text-align: center">Your Diagnosis History</h3>
+    <h3 style="text-align: left">Your <i>Diagnosis & Treatment </i> History</h3>
     {% if records %}
     <form id="reportOnSubmit" method="POST" action="/generateReport">
         Select from the table below <br>
@@ -75,7 +75,8 @@
     </form>
 </div>
     {% else %}
-    You have no records in the system
+    <br>
+    <p style="font-size: 20px;"> You have no <i>Diagnosis & Treatment </i> data recorded in our system. </p>
     {% endif %}
 {% endblock content %}
 <script>
