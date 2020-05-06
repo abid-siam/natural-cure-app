@@ -1,32 +1,29 @@
 {% extends "layout.html" %}
 {% block content %}
-<HTML>
-    
-<h1>Hello {{name}}! These are your results!</h1>
 
-<br> 
-Gender: {{gender}}
-<br>
-Age: {{age}}
+<div class="diagnosisResults">  
+	<h3>Hello {{name}}! These are your results:</h3>
 
-<br><br>
+	<br> 
+	Gender: {{gender}}
+	<br>
+	Age: {{age}}
 
-<h2>Illness:</h2>
-<b>Most Likely:</b> <br> 
-{{diagOne}}
+	<br><br>
 
-<br><br>
+	<h4>Illness:</h4>
+	Most Likely: <b>{{diagOne}}</b>
 
-<b>Lesser Likely:</b> 
-<br>
-{{diagTwo}} 
-<br>
-{{diagThree}} 
+	{% if diagTwo %}
+		<br>
+		Lesser Likely: <b>{{diagTwo}}</b>
+		{% if diagThree %}
+			or <b>{{diagThree}}</b> 
+		{% endif %}
+	{% endif %}
 
-<br> <br>
+	<br><br>
+	<h4>Natural Treatments (for most likely illness):</h4> {{treatments}}
+</div>
 
-<h2>Treatments:</h2>
-{{treatments}}
-
-</HTML>
 {% endblock content %}
