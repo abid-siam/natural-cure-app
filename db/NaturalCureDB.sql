@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS `user`(
     password CHAR(64),
     fname VARCHAR(20),
     lname VARCHAR(20),
-    gender VARCHAR(6), -- needed for API algorithm 
+    sex VARCHAR(6), -- needed for API algorithm 
     addr_street VARCHAR(50),
     addr_city VARCHAR(25),
     addr_state CHAR(2),
