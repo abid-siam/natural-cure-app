@@ -1,5 +1,6 @@
 import os
 import time
+import os
 import datetime
 from datetime import date
 from infermedica import *
@@ -8,15 +9,58 @@ from flask import Flask
 from PIL import Image
 from flask import render_template, request, session, url_for, flash, redirect
 import hashlib
-from forms import RegistrationForm, LoginForm, ChangePassForm, UpdateUserForm
+from forms import RegistrationForm, LoginForm, ChangePassForm, UpdateUserForm, UploadDocumentForm
 from connection import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '71a924bd8cc5c7250a4fd7314f3d2faa'
 
+''' 
+Ignore: used for testing purposes
+'''
+records = [
+    {
+        'timestamp' : "05/01/20",
+        'firstName' : 'Abid',
+        'lastName' : 'Siam',
+        'sex' : 'male',
+        'age' : 21,
+        'symptoms' : ['Severe Headaches', 'Light Sensitivity', 'Stiff Neck'],
+        'diagnoses' : [
+            {
+                'diagnosis' : 'Migraine',
+                'probability' : 0.4532
+            },
+            {
+                'diagnosis' : 'Meningitis',
+                'probability' : 0.2942
+            },
+            {
+                'diagnosis' : 'Tension-type headaches',
+                'probability' : 0.1787
+            }
+        ],
+        'treatments' : [
+            {
+                'condition': 'Migraine',
+                'treatments': ["Apply peppermint oil", "Massage head", "Attend Yoga class"]
+            },
+            {
+                'condition': 'Meningitis',
+                'treatments': ["Haemophilus influenzae type b (Hib) vaccine"]
+            },
+            {
+                'condition': 'Tension-type headaches',
+                'treatments': ["Cognitive behavioral therapy", "Cold compress", "Drink water"]
+            },
+        ]
+    }
+]
+
+
+UPLOAD_DIR = os.path.join(os.getcwd(), "static/uploads")
 #==========================================================================
 # Encrypt the password field to a 64 bit hexadecimal
-
 
 def encrypt(strToHash):
     encoded = hashlib.sha256(str.encode(strToHash))
@@ -83,8 +127,7 @@ def home():
 def dashboard():
     if 'logged_in' in session:
         current_user = getUser()
-        return render_template('dashboard.html', title='Dashboard', 
-            current_user=current_user, isLoggedin=True)
+        return render_template('dashboard.html', title='Dashboard', current_user=current_user, isLoggedin=True)
     else:
         return redirect(url_for('home'))
 
@@ -96,8 +139,7 @@ def register():
     form = RegistrationForm()
     isLoggedin = False
     if request.method == 'POST':
-        if form.validate_on_submit():  
-            # the function validate_on_submit() is a member function of FlaskForm
+        if form.validate_on_submit():  # the function validate_on_submit() is a member function of FlaskForm
             # check that the user information doesn't already exist
             firstName = form.first_name.data
             lastName = form.last_name.data
@@ -114,11 +156,8 @@ def register():
             # create and execute query
             cursor = conn.cursor()
             ins = 'INSERT INTO user(fname,lname,username,gender,password,addr_street,addr_city,\
-            addr_state, addr_zip, email, dob, subscribed, mfaEnabled) \
-            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,0,0)'
-            cursor.execute(ins, (firstName, lastName, username, gender, 
-                password_hashed, addr_street, addr_city, addr_state, addr_zip, 
-                email, dob))
+            addr_state, addr_zip, email, dob, subscribed, mfaEnabled) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,0,0)'
+            cursor.execute(ins, (firstName, lastName, username, gender, password_hashed, addr_street, addr_city, addr_state, addr_zip, email, dob))
             # save changes to database
             conn.commit()
             cursor.close()
@@ -159,8 +198,7 @@ def login():
             else:  # passwords do not match
 
                 flash('Login Unsuccessful. Please Check Username and Password.', 'danger')
-                # we don't want to flash the password being incorrect, 
-                # but just highliight it and display it as an error underneath the password field
+                # we don't want to flash the password being incorrect, but just highliight it and display it as an error underneath the password field
 
             # close connection
             cursor.close()
@@ -221,6 +259,14 @@ def logout():
     return redirect(url_for('home'))
 
 
+@app.route("/diagnosis")
+def diagnosis():
+    if 'logged_in' in session:
+        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True)
+    else:
+        return redirect(url_for('home'))
+
+
 @app.route("/settings")
 def settings():
     if 'logged_in' in session:
@@ -228,41 +274,69 @@ def settings():
     else:
         return redirect(url_for('home'))
 
-@app.route("/report")
-def report():
+
+@app.route("/diagnosisHistory", methods=['GET', 'POST'])
+def diagnosisHistory():
     if 'logged_in' in session:
-        return render_template('report.html', title='Report', isLoggedin=True)
+        return render_template('diagnosisHistory.html', title='Diagnosis History', isLoggedin=True)
     else:
         return redirect(url_for('home'))
 
-@app.route("/uploadRecords")
+@app.route("/uploadRecords", methods=['GET', 'POST'])
 def uploadRecords():
+    form = UploadDocumentForm()
+    current_user = getUser()
     if 'logged_in' in session:
-        return render_template('uploadRecords.html', title='Upload Medical Records', 
-            isLoggedin=True)
+        if form.validate_on_submit():
+            filename = form.document.data.filename
+            filepath = os.path.join(UPLOAD_DIR, filename)
+            form.document.data.save(filepath)
+            description = form.description.data
+            cursor = conn.cursor()
+            ts = time.time()
+            timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+            ins = 'INSERT INTO document(documentOwner, filePath, description,timestamp) VALUES(%s, %s, %s, %s)'
+            cursor.execute(ins, (current_user.username, filename, description, timestamp))
+            conn.commit()
+            cursor.close()
+            flash('Your document has been uploaded!', 'success')
+            return redirect(url_for('uploadRecords'))
+        return render_template('uploadRecords.html', title='Upload Medical Records', isLoggedin=True, form=form)
     else:
         return redirect(url_for('home'))
 
-@app.route("/viewRecords")
+@app.route("/viewRecords", methods=['GET', 'POST']) # attachments of user uploaded test results etc. 
 def viewRecords():
     if 'logged_in' in session:
-        # fetch the records for the user 
         current_user = getUser()
+        username = current_user.username
         cursor = conn.cursor()
-
-        return render_template('viewRecords.html', title='View Medical Records', isLoggedin=True)
+        if request.method == 'POST': # delete the selected document ID
+            documentID = request.form['documentID']
+            print("Attempting to delete filename id:", documentID)
+            delete = 'DELETE FROM document WHERE documentID = %s'
+            cursor.execute(delete, (documentID))
+            conn.commit()
+            flash('The selected file has been removed', 'success')
+            return redirect(url_for('viewRecords'))
+        # fetch documents for the user 
+        query = 'SELECT documentID, filePath, description, timestamp FROM document WHERE documentOwner = %s'
+        cursor.execute(query, (username))
+        data = cursor.fetchall()
+        cursor.close()
+        return render_template('viewRecords.html', title='View Medical Records', isLoggedin=True, records=data)
     else:
         return redirect(url_for('home'))
 
-@app.route("/insertData") # testing purposes 
+@app.route("/insertData", methods=['GET', 'POST']) # testing purposes 
 def insertData():
     if 'logged_in' in session:
-        current_user = getUser()
         if request.form:
-            username = current_user.username
-            symptoms = request.form['symptoms']
-
-
+            pass
+        return render_template('insertData.html', title='View Medical Records', isLoggedin=True)
+    else:
+        return redirect(url_for('home'))
+        
 
 @app.route("/shareRecords")
 def shareRecords():
@@ -284,18 +358,9 @@ def resources():
 def account():
     if 'logged_in' in session:
         current_user = getUser()
-        return render_template('account.html', title='Account', isLoggedin=True, 
-            current_user=current_user)
+        return render_template('account.html', title='Account', isLoggedin=True, current_user=current_user)
     else:
         return redirect(url_for('home'))
-
-@app.route("/diagnosis")
-def diagnosis():
-    if 'logged_in' in session:
-        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True)
-    else:
-        return redirect(url_for('home'))
-
     
 def calcAge(birth,today):
     return today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
@@ -320,15 +385,13 @@ def diagnosisReport():
     gendAge = (currUser.gender.lower(),str(currAge))
     req = diagnose(api,gendAge,parser(api,str(symptDesc)))
     if req == None:
-        return render_template('diagnosis.html', title='Diagnosis & Treatment', 
-            isLoggedin=True, reattempt="No symptoms, please provide further details")
+        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True, reattempt="No symptoms, please provide further details")
     lstIll = conditions(req[0])
     lstSympt = req[1]
     strSympt = stringFromSympt(lstSympt)
     if (lstIll[0] == "" and lstIll[1] == "" and lstIll[2] == ""):
         #if no conditions were found, more symptoms are needed
-        return render_template('diagnosis.html', title='Diagnosis & Treatment', 
-            isLoggedin=True, reattempt="No illnesses were discovered, please enter more symptoms")
+        return render_template('diagnosis.html', title='Diagnosis & Treatment', isLoggedin=True, reattempt="No illnesses were discovered, please enter more symptoms")
     cursor = conn.cursor()
     ins = 'INSERT INTO diagnosis(username,symptoms,illness,illness2,illness3) VALUES(%s,%s,%s,%s,%s)'
     cursor.execute(ins, (currUser.username, strSympt, lstIll[0], lstIll[1], lstIll[2]))
@@ -336,18 +399,12 @@ def diagnosisReport():
     data = cursor.fetchone()
     #The corresponding Illness to Treatment
     #data[remedy] will return the corresponding treatment
-    strRemedy = "No natural treatment for the above diagnosis exists in our database\
-     at this moment. Please consult your primary care physician or check our Health Resources \
-     page for further information. Thank you."
-    if data:
-        strRemedy = data["remedy"]
-        conn.commit()
-        cursor.close()
-    return render_template('results.html', name = currUser.firstName, gender = currUser.gender, age = currAge, 
-        diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2], treatments = strRemedy)
+    strRemedy = data["illness"] + ": " + data["remedy"]
+    conn.commit()
+    cursor.close()
+    return render_template('results.html', name = currUser.firstName, gender = currUser.gender, age = currAge, diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2], treatments = strRemedy)
 
-def save_picture(form_picture):
-
+def save_picture(form_picture): # profile picture 
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
@@ -356,21 +413,6 @@ def save_picture(form_picture):
     i = Image.open(form_picture)
     i.thumbnail(output_size)
     i.save(picture_path)
-
-    return picture_fn
-
-
-def save_picture2(form_picture):
-
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/posts', picture_fn)
-    output_size = (400, 500)
-    i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)
-
     return picture_fn
 
 
@@ -414,8 +456,7 @@ def update():
             else:
                 flash('Please Check the Errors Below.', 'danger')
 
-        return render_template('edit.html', title='Edit Account', form=form, 
-            current_user=current_user, isLoggedin=True)
+        return render_template('edit.html', title='Edit Account', form=form, current_user=current_user, isLoggedin=True)
     else:
         return redirect(url_for('home'))
 
