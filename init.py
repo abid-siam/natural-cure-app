@@ -1,5 +1,6 @@
 import os
 import time
+import os
 import datetime
 from datetime import date
 from infermedica import *
@@ -8,15 +9,58 @@ from flask import Flask
 from PIL import Image
 from flask import render_template, request, session, url_for, flash, redirect
 import hashlib
-from forms import RegistrationForm, LoginForm, ChangePassForm, UpdateUserForm
+from forms import RegistrationForm, LoginForm, ChangePassForm, UpdateUserForm, UploadDocumentForm
 from connection import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '71a924bd8cc5c7250a4fd7314f3d2faa'
 
+''' 
+Ignore: used for testing purposes
+'''
+records = [
+    {
+        'timestamp' : "05/01/20",
+        'firstName' : 'Abid',
+        'lastName' : 'Siam',
+        'sex' : 'male',
+        'age' : 21,
+        'symptoms' : ['Severe Headaches', 'Light Sensitivity', 'Stiff Neck'],
+        'diagnoses' : [
+            {
+                'diagnosis' : 'Migraine',
+                'probability' : 0.4532
+            },
+            {
+                'diagnosis' : 'Meningitis',
+                'probability' : 0.2942
+            },
+            {
+                'diagnosis' : 'Tension-type headaches',
+                'probability' : 0.1787
+            }
+        ],
+        'treatments' : [
+            {
+                'condition': 'Migraine',
+                'treatments': ["Apply peppermint oil", "Massage head", "Attend Yoga class"]
+            },
+            {
+                'condition': 'Meningitis',
+                'treatments': ["Haemophilus influenzae type b (Hib) vaccine"]
+            },
+            {
+                'condition': 'Tension-type headaches',
+                'treatments': ["Cognitive behavioral therapy", "Cold compress", "Drink water"]
+            },
+        ]
+    }
+]
+
+
+UPLOAD_DIR = os.path.join(os.getcwd(), "static/uploads")
 #==========================================================================
 # Encrypt the password field to a 64 bit hexadecimal
-
 
 def encrypt(strToHash):
     encoded = hashlib.sha256(str.encode(strToHash))
@@ -230,40 +274,69 @@ def settings():
     else:
         return redirect(url_for('home'))
 
-@app.route("/report")
-def report():
+
+@app.route("/diagnosisHistory", methods=['GET', 'POST'])
+def diagnosisHistory():
     if 'logged_in' in session:
-        return render_template('report.html', title='Report', isLoggedin=True)
+        return render_template('diagnosisHistory.html', title='Diagnosis History', isLoggedin=True)
     else:
         return redirect(url_for('home'))
 
-@app.route("/uploadRecords")
+@app.route("/uploadRecords", methods=['GET', 'POST'])
 def uploadRecords():
+    form = UploadDocumentForm()
+    current_user = getUser()
     if 'logged_in' in session:
-        return render_template('uploadRecords.html', title='Upload Medical Records', isLoggedin=True)
+        if form.validate_on_submit():
+            filename = form.document.data.filename
+            filepath = os.path.join(UPLOAD_DIR, filename)
+            form.document.data.save(filepath)
+            description = form.description.data
+            cursor = conn.cursor()
+            ts = time.time()
+            timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+            ins = 'INSERT INTO document(documentOwner, filePath, description,timestamp) VALUES(%s, %s, %s, %s)'
+            cursor.execute(ins, (current_user.username, filename, description, timestamp))
+            conn.commit()
+            cursor.close()
+            flash('Your document has been uploaded!', 'success')
+            return redirect(url_for('uploadRecords'))
+        return render_template('uploadRecords.html', title='Upload Medical Records', isLoggedin=True, form=form)
     else:
         return redirect(url_for('home'))
 
-@app.route("/viewRecords")
+@app.route("/viewRecords", methods=['GET', 'POST']) # attachments of user uploaded test results etc. 
 def viewRecords():
     if 'logged_in' in session:
-        # fetch the records for the user 
         current_user = getUser()
+        username = current_user.username
         cursor = conn.cursor()
-
-        return render_template('viewRecords.html', title='View Medical Records', isLoggedin=True)
+        if request.method == 'POST': # delete the selected document ID
+            documentID = request.form['documentID']
+            print("Attempting to delete filename id:", documentID)
+            delete = 'DELETE FROM document WHERE documentID = %s'
+            cursor.execute(delete, (documentID))
+            conn.commit()
+            flash('The selected file has been removed', 'success')
+            return redirect(url_for('viewRecords'))
+        # fetch documents for the user 
+        query = 'SELECT documentID, filePath, description, timestamp FROM document WHERE documentOwner = %s'
+        cursor.execute(query, (username))
+        data = cursor.fetchall()
+        cursor.close()
+        return render_template('viewRecords.html', title='View Medical Records', isLoggedin=True, records=data)
     else:
         return redirect(url_for('home'))
 
-@app.route("/insertData") # testing purposes 
+@app.route("/insertData", methods=['GET', 'POST']) # testing purposes 
 def insertData():
     if 'logged_in' in session:
-        current_user = getUser()
         if request.form:
-            username = current_user.username
-            symptoms = request.form['symptoms']
-
-
+            pass
+        return render_template('insertData.html', title='View Medical Records', isLoggedin=True)
+    else:
+        return redirect(url_for('home'))
+        
 
 @app.route("/shareRecords")
 def shareRecords():
@@ -331,8 +404,7 @@ def diagnosisReport():
     cursor.close()
     return render_template('results.html', name = currUser.firstName, gender = currUser.gender, age = currAge, diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2], treatments = strRemedy)
 
-def save_picture(form_picture):
-
+def save_picture(form_picture): # profile picture 
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
@@ -341,21 +413,6 @@ def save_picture(form_picture):
     i = Image.open(form_picture)
     i.thumbnail(output_size)
     i.save(picture_path)
-
-    return picture_fn
-
-
-def save_picture2(form_picture):
-
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/posts', picture_fn)
-    output_size = (400, 500)
-    i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)
-
     return picture_fn
 
 

@@ -1,4 +1,40 @@
 {% extends "layout.html" %}
 {% block content %}
-
+<div class ="content-section">
+    <form method="POST" action="" enctype="multipart/form-data"> <!-- Make a request to the same page  -->
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend style="text-align: center;" class="border bottom mb-4">Upload a document</legend>
+            <div class="form-group">
+                {{ form.document.label() }}
+                {{ form.document(class="form-control-file") }}
+                {% if form.document.errors %}
+                    {% for error in form.document.errors %}
+                        <span class="text-danger">{{ error }}</span></br>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.description.label(class="form-control-label")}}
+                {% if form.description.errors %}
+                    {{ form.description(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in form.description.errors %}
+                            <span> {{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.description(class="form-control form-control-lg")}} <!-- input field is valid -->
+                {% endif %}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+        To view all of your documents go <a href="/viewRecords">here</a>
+        <br>
+        <br>
+        <small class="text-muted">The Natural Cure Application is HIPAA complaint. All medical documents and information provided by the user will be protected via encryption mechanisms. For more information on HIPAA, visit <a href="https://www.hhs.gov/hipaa/index.html">hhs.gov</a>.</small>
+    </form>
+</div>
 {% endblock content %}

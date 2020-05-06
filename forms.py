@@ -69,3 +69,8 @@ class ChangePassForm(FlaskForm):
 
 class SubscribeForm(FlaskForm):
     pass
+
+class UploadDocumentForm(FlaskForm):
+    document = FileField('Select a document', validators=[FileAllowed(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'doc']), DataRequired()])
+    description = TextAreaField('Description', validators=[Length(max=1024)])
+    submit = SubmitField('Upload')

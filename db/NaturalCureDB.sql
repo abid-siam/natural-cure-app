@@ -57,3 +57,14 @@ CREATE TABLE IF NOT EXISTS `condition`(
     FOREIGN KEY (recordID) REFERENCES `diagnosis`(recordID),
     FOREIGN KEY (username) REFERENCES `user`(username)
 );
+
+-- row created after a user uploads a document 
+CREATE TABLE IF NOT EXISTS `document`(
+    documentID int NOT NULL AUTO_INCREMENT,
+    documentOwner VARCHAR(20), -- user that uploads the document
+    filePath VARCHAR(2048), --filepath of the document (will be saved to static/uploads)
+    description VARCHAR(1024),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY(documentID),
+    FOREIGN KEY (documentOwner) REFERENCES `user`(username)
+);

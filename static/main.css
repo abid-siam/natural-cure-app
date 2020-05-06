@@ -124,7 +124,12 @@ p{
   width: 50%;
 }
 
-
+.data-table{
+  max-width: 800px;
+  min-width: 500px;
+  margin: 40px auto;
+  width: 90%;
+}
 
 #message{
   width: 50%;
