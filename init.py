@@ -328,16 +328,7 @@ def viewRecords():
         return render_template('viewRecords.html', title='View Medical Records', isLoggedin=True, records=data)
     else:
         return redirect(url_for('home'))
-
-@app.route("/insertData", methods=['GET', 'POST']) # testing purposes 
-def insertData():
-    if 'logged_in' in session:
-        if request.form:
-            pass
-        return render_template('insertData.html', title='View Medical Records', isLoggedin=True)
-    else:
-        return redirect(url_for('home'))
-        
+ 
 
 @app.route("/shareRecords")
 def shareRecords():

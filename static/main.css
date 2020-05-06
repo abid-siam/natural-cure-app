@@ -161,12 +161,11 @@ p{
 }
 
 .user-info-small{
-  margin-top: 20px;
-  display: inline-block;
-  position: absolute;
-  margin-left: 200px;
-  margin-right: 100px;
-  margin-bottom: 100px;
+  text-align: center;
+  max-width: 500px;
+  min-width: 250px;
+  margin: 40px auto;
+  width: 30%;
 }
 
 .media#account-pg{
@@ -221,9 +220,8 @@ p{
 
 /* Fixed sidenav, full height */
 .vertical-menu {
-  margin-top: 50px;
-  width: 150px;
-  height: 250px;
+  margin-top: 30px;
+  width: 100%;
 }
 
 /* Style the sidenav links and the dropdown button */
@@ -232,7 +230,7 @@ p{
   display: block;
   padding: 12px;
   text-decoration: none;
-  background-color: #5f788a;
+  background-color: #103d6e;
   width:100%;
   cursor: pointer;
   outline: none;
@@ -240,21 +238,27 @@ p{
 }
 
 /* On mouse-over */
-.vertical-menu a:hover, .dropdown-btn:hover {
+.vertical-menu a:hover, .dropdown-btn:hover, #dropdown-container a:hover {
   color: white;
+  background-color: #103d6ec2
 }
 
 
 /* Add an active class to the active dropdown button */
 .active {
-  background-color: ;
   color: white;
 }
 
 /* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
-.dropdown-container {
+#dropdown-container a:hover {
+  background-color: #103d6ec2;
+}
+#dropdown-cotaniner a {
+  text-align: center;
+}
+#dropdown-container {
+  text-align: center;
   display: none;
-  background-color: #5f788a;
 /*  padding-left: 8px;*/
 }
 
