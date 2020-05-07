@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="diagnosisResults">  
-	<h3>Hello {{name}}! These are your results:</h3>
+	<h2>Hello {{name}}! These are your results:</h2>
 
 	<br> 
 	Sex: {{sex}}
@@ -12,7 +12,7 @@
 
 	<br><br>
 
-	<h4>Illness:</h4>
+	<h3>Illness:</h3>
 	Most Likely: <b>{{diagOne}}</b>
 
 	{% if diagTwo %}
@@ -24,7 +24,27 @@
 	{% endif %}
 
 	<br><br>
-	<h4>Natural Treatments (for most likely illness):</h4> {{treatments}}
+	<h3 style="margin-bottom: 20px;">Natural Treatments (for most likely illness)</h3>
+	{% if treatments %}
+		<ol>
+		    {% for result in treatments %}
+		        <li>
+		            {{ result.treatment }}
+		        </li>
+		        <ul>
+		            {% for option in result.options %}
+		                <li>
+		                    {{option}}
+		                </li>
+		            {% endfor %}
+		        </ul>
+		        <br>
+		    {% endfor %}
+		</ol>
+	{% else %}
+		{{blank}}
+	{% endif %}
+	
 </div>
 
 {% endblock content %}
