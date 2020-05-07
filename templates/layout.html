@@ -88,8 +88,24 @@
           } else {
               $('#diagnose').attr('disabled', true);
           }
-    });
       });
+      $('.check').change(function() {
+        if ($('.check:checked').length) {
+            $('#report').removeAttr('disabled');
+        } else {
+            $('#report').attr('disabled', 'disabled');
+        }
+      });
+      $('#viewRecordsTable').DataTable({
+        'order':[[0, 'desc']]
+      });
+      });
+      var confirmDeleteRecord = function(btn, recordID){
+        var result = confirm("Are you sure you want to delete this session record?");
+        if (result) {
+          deleteRowRecord(btn, recordID);
+        }
+      }
       var confirmDelete = function(btn, documentID){
           var result = confirm("Are you sure you want to delete this file?");
           if (result) {
@@ -107,6 +123,13 @@
           row.parentNode.removeChild(row);
           $.post("/viewRecords", {
               'documentID' : documentID
+          });
+      }
+      function deleteRowRecord(btn, documentID) {
+          var row = btn.parentNode.parentNode;
+          row.parentNode.removeChild(row);
+          $.post("/diagnosisHistory", {
+              'recordID' : documentID
           });
       }
       var dropdown = document.getElementsByClassName("dropdown-btn");

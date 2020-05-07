@@ -5,9 +5,10 @@ import datetime
 from datetime import date
 from infermedica import *
 import secrets
+import pdfkit
 from flask import Flask
 from PIL import Image
-from flask import render_template, request, session, url_for, flash, redirect
+from flask import render_template, request, session, url_for, flash, redirect, make_response
 import hashlib
 from forms import RegistrationForm, LoginForm, ChangePassForm, UpdateUserForm, UploadDocumentForm
 from connection import *
@@ -16,15 +17,13 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '71a924bd8cc5c7250a4fd7314f3d2faa'
 
 ''' 
-Ignore: used for testing purposes
+Ignore: used for testing purposes 
+Will be replaced with data from database
 '''
 records = [
     {
-        'timestamp' : "05/01/20",
-        'firstName' : 'Abid',
-        'lastName' : 'Siam',
-        'sex' : 'male',
-        'age' : 21,
+        'timestamp' : "20/05/01 12:03:32",
+        'recordID' : 0,
         'symptoms' : ['Severe Headaches', 'Light Sensitivity', 'Stiff Neck'],
         'diagnoses' : [
             {
@@ -43,18 +42,51 @@ records = [
         'treatments' : [
             {
                 'condition': 'Migraine',
-                'treatments': ["Apply peppermint oil", "Massage head", "Attend Yoga class"]
+                'treatments': "Apply peppermint oil, Massage head, Attend Yoga class"
             },
             {
                 'condition': 'Meningitis',
-                'treatments': ["Haemophilus influenzae type b (Hib) vaccine"]
+                'treatments': "Haemophilus influenzae type b (Hib) vaccine"
             },
             {
                 'condition': 'Tension-type headaches',
-                'treatments': ["Cognitive behavioral therapy", "Cold compress", "Drink water"]
+                'treatments': "Cognitive behavioral therapy, Cold compress, Drink water"
             },
         ]
-    }
+    },
+    {
+        'timestamp' : "20/05/06 01:03:32",
+        'recordID' : 1,
+        'symptoms' : ['Severe Headaches', 'Light Sensitivity', 'Stiff Neck'],
+        'diagnoses' : [
+            {
+                'diagnosis' : 'Migraine',
+                'probability' : 0.4532
+            },
+            {
+                'diagnosis' : 'Meningitis',
+                'probability' : 0.2942
+            },
+            {
+                'diagnosis' : 'Tension-type headaches',
+                'probability' : 0.1787
+            }
+        ],
+        'treatments' : [
+            {
+                'condition': 'Migraine',
+                'treatments': "Apply peppermint oil, Massage head, Attend Yoga class"
+            },
+            {
+                'condition': 'Meningitis',
+                'treatments': "Haemophilus influenzae type b (Hib) vaccine"
+            },
+            {
+                'condition': 'Tension-type headaches',
+                'treatments': "Cognitive behavioral therapy, Cold compress, Drink water"
+            },
+        ]
+    },
 ]
 
 
@@ -279,7 +311,36 @@ def settings():
 @app.route("/diagnosisHistory", methods=['GET', 'POST'])
 def diagnosisHistory():
     if 'logged_in' in session:
-        return render_template('diagnosisHistory.html', title='Diagnosis History', isLoggedin=True)
+        return render_template('diagnosisHistory.html', title='Diagnosis History', isLoggedin=True,records=records)
+    else:
+        return redirect(url_for('home'))
+
+@app.route("/generateReport", methods=['GET', 'POST'])
+def generateReport():
+    if 'logged_in' in session:
+        if request.form:
+            current_user = getUser()
+            currAge = calcAge(current_user.dob,date.today())
+            user = {}
+            user['firstName'] = current_user.firstName
+            user['lastName'] = current_user.lastName
+            user['age'] = currAge
+            user['sex'] = current_user.sex
+            ts = time.time()
+            current_time = datetime.datetime.fromtimestamp(ts).strftime("%d/%m/%Y %I:%M:%S %p") # current time 
+            recordIds = request.form.getlist("checked")
+            print("The records chosen:", recordIds)
+            chosenRecords = []
+            for record in records:
+                if str(record['recordID']) in recordIds:
+                    chosenRecords.append(record)
+            total = len(chosenRecords)
+            rendered = render_template('reportTemplate.html', records=chosenRecords, current_time=current_time, total=total, user=user)
+            pdf = pdfkit.from_string(rendered, False)
+            response = make_response(pdf)
+            response.headers['Content-Type'] = 'application/pdf'
+            response.headers['Content-Disposition'] = 'inline; filename=report.pdf'
+            return response 
     else:
         return redirect(url_for('home'))
 

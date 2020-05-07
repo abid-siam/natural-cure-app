@@ -130,7 +130,15 @@ p{
   margin: 40px auto;
   width: 90%;
 }
-
+.data-table-history{
+  max-width: 950px;
+  min-width: 600px;
+  margin: 40px auto;
+  width: 95%;
+}
+#inner-table tr:first-child td{
+  background-color: #89CFF0;
+}
 .intro-prompt{
   max-width: 650px;
   min-width: 500px;

@@ -1,49 +1,50 @@
 <body style = "font-family:Arial, Helvetica, sans-serif">
     <h1>
-        Medical Report for {{report.firstName}} {{report.lastName}}
+        Medical record for {{user.firstName}} {{user.lastName}}
     </h1>
-    <p>Issued: {{report.timestamp}}</p>
-    <p>Report Generated: {{current_time}}</p>
+    <p>Record Generated: {{current_time}}</p>
     <h4><u>User Information</u></h4>
         <ul>
             <li>
-                Sex: {{report.sex}}
+                Sex: {{user.sex}}
             </li>
             <li>
-                Age: {{report.age}} years old
+                Age: {{user.age}} years old
             </li>
-    
         </ul>
-    <h4><u>Symptoms Reported</u></h4>
-    <ul>
-        {% for symptom in report.symptoms %}
-            <li>
-                {{symptom}}
-            </li>
-        {% endfor %}
-    </ul>
-    <h4><u>Diagnosis</u></h4>
-    <p>The following diagnosis was made via a trusted third party API, Infermedica.</p>
-    <p>Results are shown in decreasing order of probability. Any result above 45% is considered a good diagnosis.</p>
-    <ol>
-        {% for diagnosis in report.diagnoses %}
-            <li>
-                {% set percent = diagnosis.probability * 100 %}
-                <b>{{diagnosis.diagnosis}}</b> with a probability of <b>{{ '%.2f'|format(percent) }}</b>
-            </li>
-        {% endfor %}
-    </ol>
-    <h4><u>Treatment and Further Prevention</u></h4>
-    <p>The following treatment options are alternatives to prescription drugs</p>
-    <p>Please speak with your medical professional to make further decisions</p>
-    
-    {% for result in report.treatments %}
-    <h4>{{result.condition}}</h4>
+    <p>__________________________________________________________________________________________________</p>
+    {% for record in records %}
+        <strong>Record {{loop.index}} of {{total}}</strong>
+        <br>
+        <p>Issued: {{record.timestamp}}</p>
+        <h4><u>Symptoms recorded</u></h4>
         <ul>
-        {% for treatment in result.treatments %}
-            <li>{{treatment}}</li>
-        {% endfor %}
+            {% for symptom in record.symptoms %}
+                <li>
+                    {{symptom}}
+                </li>
+            {% endfor %}
         </ul>
+        <h4><u>Diagnosis</u></h4>
+        <p>The following diagnosis was made via a trusted third party API, Infermedica.</p>
+        <p>Results are shown in decreasing order of probability. Any result above 45% is considered an accurate diagnosis.</p>
+        <ol>
+            {% for diagnosis in record.diagnoses %}
+                <li>
+                    {% set percent = diagnosis.probability * 100 %}
+                    <b>{{diagnosis.diagnosis}}</b> with a probability of <b>{{ '%.2f'|format(percent) }}</b>
+                </li>
+            {% endfor %}
+        </ol>
+        <h4><u>Treatment and Further Prevention</u></h4>
+        <p>The following treatment options are alternatives to prescription drugs</p>
+        <p>Please speak with your medical professional to make further decisions</p>
+        
+        {% for result in record.treatments %}
+        <h4>{{result.condition}}</h4>
+            Treatment options: {{result.treatments}}.
+        {% endfor %}
+        <p>__________________________________________________________________________________________________</p>
     {% endfor %}
 </body>
 
