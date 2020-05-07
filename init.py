@@ -411,6 +411,9 @@ def shareRecords():
     if 'logged_in' in session:
         username = current_user.username
         files = getFileRecords(username)
+        has_records = False
+        if len(files) > 0:
+            has_records = True
         form.select.choices = files
         form.user_email.data = current_user.email
 
@@ -452,14 +455,14 @@ def shareRecords():
             except smtplib.SMTPRecipientsRefused:
                 flash('The recipient refused to accept the email. Please try again', 'danger')
                 return redirect(url_for('shareRecords'))
-            
+
             smtp.quit()
 
             flash('The email has been sent successfully!', 'success')
             # attempted = False
             return redirect(url_for('shareRecords'))
 
-        return render_template('shareRecords.html', title='Share Medical Records', isLoggedin=True, form=form)
+        return render_template('shareRecords.html', title='Share Medical Records', isLoggedin=True, form=form, has_records=has_records)
     else:
         return redirect(url_for('home'))
 
