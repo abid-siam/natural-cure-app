@@ -415,7 +415,9 @@ def shareRecords():
         if len(files) > 0:
             has_records = True
         form.select.choices = files
-        form.user_email.data = current_user.email
+        
+        if request.method == 'GET':  # fill in form with information in database
+            form.user_email.data = current_user.email
 
         if form.validate_on_submit():
 

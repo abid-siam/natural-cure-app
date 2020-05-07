@@ -76,8 +76,8 @@ class UploadDocumentForm(FlaskForm):
 
 class ShareRecordsForm(FlaskForm):
     recipient = EmailField('Recipient Email Address', validators=[DataRequired(), Email()])
-    user_email = EmailField('From Email Address', validators=[DataRequired(), Email()])
-    user_password = PasswordField('Email Password', validators=[DataRequired()])
+    user_email = EmailField('Sender Email Address', validators=[DataRequired(), Email()])
+    user_password = PasswordField('Sender Email Password', validators=[DataRequired()])
     subject = StringField('Subject', validators=[Length(max=78)])
     body = TextAreaField('Message', validators=[Length(max=1024)])
     select = SelectField('Choose a file', validators=[DataRequired()])

@@ -85,14 +85,17 @@
                 {% endif %}
             </div>
             {% if not has_records %}
-                You have not uploaded any documents yet. To upload, go to <a href="/uploadRecords">upload record</a>
+                You have no files in our system. To upload, go to <a href="/uploadRecords">Upload Medical Records</a>
             {% endif %}
         </fieldset>
+        <br>
         <div class="form-group">
             {{ form.submit(class="btn btn-outline-info") }}
         </div>
         <br>
         To view all of your uploaded documents go to <a href="/viewRecords">View Medical Records</a>
+        <br><br>
+        To upload additional documents go to <a href="/uploadRecords">Upload Medical Records</a>
         <br>
     </form>
 </div>
