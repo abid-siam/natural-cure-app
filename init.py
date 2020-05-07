@@ -425,20 +425,20 @@ def shareRecords():
             subject = form.subject.data
             body = form.body.data
 
-            fileToSend = UPLOAD_DIR + '/' + form.select.data
+            fileToSend = form.select.data
+            filePath = UPLOAD_DIR + '/' + fileToSend
             msg = MIMEMultipart()
             msg['From'] = user_email
             msg['To'] = receiver_address
             msg['Subject'] = subject
             msg['Date'] = formatdate(localtime=True)
             msg.attach(MIMEText(body))
-            filepath = UPLOAD_DIR + '/' + fileToSend
             part = MIMEBase('application', "octet-stream")
-            with open(fileToSend, 'rb') as f:
+            with open(filePath, 'rb') as f:
                 part.set_payload(f.read())
             encoders.encode_base64(part)
             part.add_header('Content-Disposition', 
-                            'attachment; filename="{}"'.format(filepath))
+                            'attachment; filename="{}"'.format(fileToSend))
             msg.attach(part)
             smtp = smtplib.SMTP_SSL('smtp.gmail.com', 465)
             try:
