@@ -12,7 +12,7 @@ def parser(api, userSymptoms):
 def addSympt(request, sympt):
     symptList = []
     for i in sympt:
-        symptList.append(i.id)
+        symptList.append(i.name)
         print(i)
         if i ==sympt[0]:
             request.add_symptom(i.id,i.choice_id,initial = True)
