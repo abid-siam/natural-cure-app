@@ -379,7 +379,6 @@ def viewRecords():
             delete = 'DELETE FROM document WHERE documentID = %s'
             cursor.execute(delete, (documentID))
             conn.commit()
-            flash('The selected file has been removed.', 'success')
             return redirect(url_for('viewRecords'))
         # fetch documents for the user 
         query = 'SELECT documentID, filePath, description, timestamp FROM document WHERE documentOwner = %s'
