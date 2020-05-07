@@ -202,10 +202,10 @@ def register():
             conn.commit()
             cursor.close()
             # notify the user of successful creation of account
-            flash(f'Account Created for {form.username.data}! You Can Now Log In!', 'success')  
+            flash(f'Account created for {form.username.data}! You can now log in!', 'success')  
             return redirect(url_for('login'))
         else:
-            flash('Please Check the Errors Below.', 'danger')
+            flash('Please check the errors below.', 'danger')
     return render_template('register.html', title='Register', form=form, isLoggedin=isLoggedin)
 
 
@@ -233,17 +233,17 @@ def login():
                 session['logged_in'] = True
                 session['username'] = username
                 cursor.close()
-                flash("You Have Successfully Logged In!", "success")
+                flash("You have successfully logged in!", "success")
                 return redirect(url_for("dashboard"))
             else:  # passwords do not match
 
-                flash('Login Unsuccessful. Please Check Username and Password.', 'danger')
+                flash('Login unsuccessful. Please check uername and password.', 'danger')
                 # we don't want to flash the password being incorrect, but just highliight it and display it as an error underneath the password field
 
             # close connection
             cursor.close()
         else:  # no results with the specified username in the database
-            flash('Login Unsuccessful. No Account Exists With That Username.', 'danger')
+            flash('Login unsuccessful. No account exists with that username.', 'danger')
             cursor.close()
 
     return render_template('login.html', title='Login', form=form)
@@ -273,7 +273,7 @@ def changePassword():
                 # passwords match, update current password
                 newPassHashed = encrypt(newPass)
                 if currentPass == newPassHashed:
-                    flash('Your new password must be different from your current password', 'warning')
+                    flash('Your new password must be different from your current password.', 'warning')
                     return redirect(url_for('changePassword'))
                 # can now update the password to database
                 query = 'UPDATE Person SET password=%s WHERE username=%s'
@@ -281,11 +281,11 @@ def changePassword():
                 conn.commit()
                 cursor.close()
                 session.clear()  # must login again
-                flash('Your Password Has Been Updated', 'success')
+                flash('Your password has been updated.', 'success')
                 return redirect(url_for('login'))
             else:
                 cursor.close()
-                flash('Incorrect Password, Could Not Change Password', 'danger')
+                flash('Incorrect password. Could not change password.', 'danger')
                 return redirect(url_for('login'))
         return render_template('changePassword', title='Change Password', form=form, isLoggedin=True)
     return redirect(url_for('home'))
@@ -295,7 +295,7 @@ def changePassword():
 def logout():
     if 'logged_in' in session:
         session.clear()
-        flash('You Have Been Successfully Logged Out.', 'success')
+        flash('You have been successfully logged out.', 'success')
     return redirect(url_for('home'))
 
 
@@ -361,7 +361,7 @@ def uploadRecords():
             cursor.execute(ins, (current_user.username, filename, description, timestamp))
             conn.commit()
             cursor.close()
-            flash('Your Document Has Been Successfully Uploaded!', 'success')
+            flash('Your document has been successfully uploaded!', 'success')
             return redirect(url_for('uploadRecords'))
         return render_template('uploadRecords.html', title='Upload Medical Records', isLoggedin=True, form=form)
     else:
@@ -379,7 +379,7 @@ def viewRecords():
             delete = 'DELETE FROM document WHERE documentID = %s'
             cursor.execute(delete, (documentID))
             conn.commit()
-            flash('The Selected File Has Been Removed.', 'success')
+            flash('The selected file has been removed.', 'success')
             return redirect(url_for('viewRecords'))
         # fetch documents for the user 
         query = 'SELECT documentID, filePath, description, timestamp FROM document WHERE documentOwner = %s'
@@ -452,7 +452,7 @@ def shareRecords():
             try:
                 smtp.sendmail(user_email, receiver_address, msg.as_string())
             except smtplib.SMTPServerDisconnected:
-                flash('The Email server has disconnected unexpectedly. Please try again.', 'danger')
+                flash('The email server has disconnected unexpectedly. Please try again.', 'danger')
                 return redirect(url_for('shareRecords'))
             except smtplib.SMTPRecipientsRefused:
                 flash('The recipient refused to accept the email. Please try again.', 'danger')
@@ -598,10 +598,10 @@ def update():
                 session['username'] = username
                 conn.commit()
                 cursor.close()
-                flash('Your Account Has Been Successfully Updated!', 'success')  
+                flash('Your account has been successfully updated!', 'success')  
                 return redirect(url_for('update'))
             else:
-                flash('Please Check the Errors Below.', 'danger')
+                flash('Please check the errors below.', 'danger')
 
         return render_template('edit.html', title='Edit Account', form=form, current_user=current_user, isLoggedin=True)
     else:
