@@ -84,6 +84,9 @@
                     {{ form.select(class="form-control form-control-lg")}} <!-- input field is valid -->
                 {% endif %}
             </div>
+            {% if not has_records %}
+                You have not uploaded any documents yet. To upload, go to <a href="/uploadRecords">upload record</a>
+            {% endif %}
         </fieldset>
         <div class="form-group">
             {{ form.submit(class="btn btn-outline-info") }}
