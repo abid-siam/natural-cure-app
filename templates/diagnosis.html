@@ -1,8 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
 
-
-<div class="intro-prompt" id="intro-prompt">
+{% if accepted %}
+    {% set displayTerms = "none" %}
+    {% set displayForm = "block" %}
+{% else %}
+    {% set displayTerms = "block" %}
+    {% set displayForm = "none" %}
+{% endif %}
+<div class="intro-prompt" id="intro-prompt" style="display:{{displayTerms}}">
     <h3>Terms of Service </h3>
     <p style="text-align: left;">Before starting the diagnosis, please read the Terms of Service. Remember that:</p>
     <ul style="margin-top: 20px;">
@@ -25,7 +31,7 @@
     <button style="margin-top: 15px;" id="start" type="button" disabled='disabled' onclick="startDiagnosis()" class="btn btn-primary">Start</button>
 </div>
 
-<div class="input-symptoms" style="display:none" id="input-symptoms">
+<div class="input-symptoms" style="display:{{displayForm}}" id="input-symptoms">
     <fieldset class="form-group">
         <legend>Please provide a description of your symptoms</legend>
             <form action="/diagnosisReport" method="POST">

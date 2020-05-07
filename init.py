@@ -432,14 +432,14 @@ def diagnosisReport():
     req = diagnose(api,gendAge,parser(api,str(symptDesc)))
     if req == None:
         flash('The symptoms you entered could not be recognized. Please try again.', 'danger')
-        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True)
+        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True, accepted=True)
     lstIll = conditions(req[0])
     lstSympt = req[1]
     strSympt = stringFromSympt(lstSympt)
     if (lstIll[0] == "" and lstIll[1] == "" and lstIll[2] == ""):
         #if no conditions were found, more symptoms are needed
         flash('The symptoms you entered could not be recognized. Please try again.', 'danger')
-        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True)
+        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True, accepted=True)
     cursor = conn.cursor()
     ins = 'INSERT INTO diagnosis(username,symptoms,illness,illness2,illness3) VALUES(%s,%s,%s,%s,%s)'
     cursor.execute(ins, (currUser.username, strSympt, lstIll[0], lstIll[1], lstIll[2]))
@@ -458,10 +458,10 @@ def diagnosisReport():
      diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2], treatments = strRemedy)
 
 
-@app.route("/diagnosis")
+@app.route("/diagnosis", methods=['GET'])
 def diagnosis():
     if 'logged_in' in session:
-        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True)
+        return render_template('diagnosis.html', title='Diagnosis & Treatment ', isLoggedin=True, accepted=False)
     else:
         return redirect(url_for('home'))
 
