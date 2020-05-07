@@ -1,4 +1,96 @@
 {% extends "layout.html" %}
 {% block content %}
-
+<div class ="content-section">
+    <form method="POST" action=""> <!-- Make a request to the same page  -->
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend style="text-align: center;">Send Email</legend>
+            <br>
+            <div class="form-group">
+                {{ form.user_email.label(class="form-control-label")}}
+                {% if form.user_email.errors %}
+                    {{ form.user_email(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in form.user_email.errors %}
+                            <span> {{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.user_email(class="form-control form-control-lg")}} 
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.user_password.label(class="form-control-label")}}
+                {% if form.user_password.errors %}
+                    {{ form.user_password(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in form.user_password.errors %}
+                            <span> {{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.user_password(class="form-control form-control-lg")}} <!-- input field is valid -->
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.recipient.label(class="form-control-label")}}
+                {% if form.recipient.errors %}
+                    {{ form.recipient(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in form.recipient.errors %}
+                            <span> {{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.recipient(class="form-control form-control-lg")}} <!-- input field is valid -->
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.subject.label(class="form-control-label")}}
+                {% if form.subject.errors %}
+                    {{ form.subject(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in form.subject.errors %}
+                            <span> {{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.subject(class="form-control form-control-lg")}} <!-- input field is valid -->
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.body.label(class="form-control-label")}}
+                {% if form.body.errors %}
+                    {{ form.body(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in form.body.errors %}
+                            <span> {{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.body(class="form-control form-control-lg")}} <!-- input field is valid -->
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.select.label(class="form-control-label")}}
+                {% if form.select.errors %}
+                    {{ form.select(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {% for error in form.select.errors %}
+                            <span> {{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.select(class="form-control form-control-lg")}} <!-- input field is valid -->
+                {% endif %}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+        <br>
+        To view all of your uploaded documents go to <a href="/viewRecords">View Medical Records</a>
+        <br>
+    </form>
+</div>
 {% endblock content %}

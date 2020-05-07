@@ -73,3 +73,12 @@ class UploadDocumentForm(FlaskForm):
     document = FileField('Select a document', validators=[FileAllowed(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'doc']), DataRequired()])
     description = TextAreaField('Description', validators=[Length(max=1024)])
     submit = SubmitField('Upload')
+
+class ShareRecordsForm(FlaskForm):
+    recipient = EmailField('Recipient Email Address', validators=[DataRequired(), Email()])
+    user_email = EmailField('From Email Address', validators=[DataRequired(), Email()])
+    user_password = PasswordField('Email Password', validators=[DataRequired()])
+    subject = StringField('Subject', validators=[Length(max=78)])
+    body = TextAreaField('Message', validators=[Length(max=1024)])
+    select = SelectField('Choose a file', validators=[DataRequired()])
+    submit = SubmitField('Send')

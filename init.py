@@ -5,13 +5,21 @@ import datetime
 from datetime import date
 from infermedica import *
 import secrets
-import pdfkit
+import pdfkit    # library to generate pdf 
 from flask import Flask
 from PIL import Image
 from flask import render_template, request, session, url_for, flash, redirect, make_response
 import hashlib
-from forms import RegistrationForm, LoginForm, ChangePassForm, UpdateUserForm, UploadDocumentForm
+from forms import RegistrationForm, LoginForm, ChangePassForm, UpdateUserForm, UploadDocumentForm, ShareRecordsForm
 from connection import *
+# email libraries and dependencies
+import smtplib
+from pathlib import Path
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email.utils import COMMASPACE, formatdate
+from email import encoders
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '71a924bd8cc5c7250a4fd7314f3d2faa'
@@ -177,7 +185,6 @@ def register():
             lastName = form.last_name.data
             username = form.username.data
             sex = form.sex.data
-            print("The sex is:", sex)
             password_hashed = encrypt(form.password.data)
             addr_street = form.addr_street.data
             addr_city = form.addr_city.data
@@ -383,11 +390,76 @@ def viewRecords():
     else:
         return redirect(url_for('home'))
  
+def getFileRecords(username):
+    files = []
+    cursor = conn.cursor()
+    query = 'SELECT documentID, filePath, description, timestamp FROM document WHERE documentOwner = %s'
+    cursor.execute(query, (username))
+    data = cursor.fetchall()
+    cursor.close()
+    for i in range(len(data)):
+        result = data[i].get('filePath') + ', ' + data[i].get('description')
+        files.append((data[i].get('filePath'), result))
+    return files
 
-@app.route("/shareRecords")
+
+
+@app.route("/shareRecords", methods=['GET', 'POST'])
 def shareRecords():
+    form = ShareRecordsForm()
+    current_user = getUser()
     if 'logged_in' in session:
-        return render_template('shareRecords.html', title='Share Medical Records', isLoggedin=True)
+        username = current_user.username
+        files = getFileRecords(username)
+        form.select.choices = files
+        form.user_email.data = current_user.email
+
+        if form.validate_on_submit():
+
+            receiver_address = form.recipient.data
+            user_email = form.user_email.data
+            user_password = form.user_password.data
+            subject = form.subject.data
+            body = form.body.data
+
+            fileToSend = UPLOAD_DIR + '/' + form.select.data
+            msg = MIMEMultipart()
+            msg['From'] = user_email
+            msg['To'] = receiver_address
+            msg['Subject'] = subject
+            msg['Date'] = formatdate(localtime=True)
+            msg.attach(MIMEText(body))
+            filepath = UPLOAD_DIR + '/' + fileToSend
+            part = MIMEBase('application', "octet-stream")
+            with open(fileToSend, 'rb') as f:
+                part.set_payload(f.read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', 
+                            'attachment; filename="{}"'.format(filepath))
+            msg.attach(part)
+            smtp = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+            try:
+                smtp.login(user_email, user_password)
+            except smtplib.SMTPAuthenticationError:
+                flash('The email or password for the sender is not valid. Please try again', 'danger')
+                return redirect(url_for('shareRecords'))
+
+            try:
+                smtp.sendmail(user_email, receiver_address, msg.as_string())
+            except smtplib.SMTPServerDisconnected:
+                flash('The Email server has disconnected unexpectedly. Please try again', 'danger')
+                return redirect(url_for('shareRecords'))
+            except smtplib.SMTPRecipientsRefused:
+                flash('The recipient refused to accept the email. Please try again', 'danger')
+                return redirect(url_for('shareRecords'))
+            
+            smtp.quit()
+
+            flash('The email has been sent successfully!', 'success')
+            # attempted = False
+            return redirect(url_for('shareRecords'))
+
+        return render_template('shareRecords.html', title='Share Medical Records', isLoggedin=True, form=form)
     else:
         return redirect(url_for('home'))
 
