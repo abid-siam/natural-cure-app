@@ -291,10 +291,10 @@ bottom: .5em;
 }
 
 .diagnosisResults{
-  margin-top: 40px;
-  margin-left: 100px;
-  margin-right: 400px;
-  margin-bottom: 40px;
+  max-width: 950px;
+  min-width: 400px;
+  margin: 40px auto;
+  width: 95%;
   font-size: 20px;
 }
 

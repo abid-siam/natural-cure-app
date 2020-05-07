@@ -443,19 +443,29 @@ def diagnosisReport():
     cursor = conn.cursor()
     ins = 'INSERT INTO diagnosis(username,symptoms,illness,illness2,illness3) VALUES(%s,%s,%s,%s,%s)'
     cursor.execute(ins, (currUser.username, strSympt, lstIll[0], lstIll[1], lstIll[2]))
+    conn.commit()
     query = cursor.execute("SELECT * FROM treatment WHERE illness = %s", lstIll[0])
     data = cursor.fetchone()
-    #The corresponding Illness to Treatment
+    cursor.close()
     #data[remedy] will return the corresponding treatment
-    strRemedy = "No natural treatment for the above diagnosis exists in our database\
-     at this moment. Please consult your primary care physician or check our Health Resources \
-     page for further information. Thank you."
+    strDisplay = [] 
     if data:
         strRemedy = data["remedy"]
-        conn.commit()
-        cursor.close()
+        treatments = strRemedy.split(';') # separates into list of treatments 
+        for result in treatments:
+            treatment = {}                # create a treatment object
+            resultSplit = result.split(':') # separates into treatment and options
+            treatment['treatment'] = resultSplit[0]
+            if len(resultSplit) == 2:
+                treatment['options'] = resultSplit[1].split(',')
+            strDisplay.append(treatment)   # add treatment object to strDisplay 
+
+    strBlank = "No natural treatment for the above diagnosis exists in our database\
+        at this moment. Please consult your primary care physician or check our Health Resources \
+        page for further information. Thank you."
+
     return render_template('diagnosisResults.html', name = currUser.firstName, sex = currUser.sex, age = currAge,
-     diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2], treatments = strRemedy)
+     diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2], treatments = strDisplay, blank = strBlank, isLoggedin=True)
 
 
 @app.route("/diagnosis", methods=['GET'])

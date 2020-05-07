@@ -24,7 +24,27 @@
 	{% endif %}
 
 	<br><br>
-	<h3>Natural Treatments (for most likely illness):</h3> {{treatments}}
+	<h3 style="margin-bottom: 20px;">Natural Treatments (for most likely illness)</h3>
+	{% if treatments %}
+		<ol>
+		    {% for result in treatments %}
+		        <li>
+		            {{ result.treatment }}
+		        </li>
+		        <ul>
+		            {% for option in result.options %}
+		                <li>
+		                    {{option}}
+		                </li>
+		            {% endfor %}
+		        </ul>
+		        <br>
+		    {% endfor %}
+		</ol>
+	{% else %}
+		{{blank}}
+	{% endif %}
+	
 </div>
 
 {% endblock content %}
