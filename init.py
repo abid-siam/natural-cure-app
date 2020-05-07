@@ -304,7 +304,6 @@ def settings():
 @app.route("/diagnosisHistory", methods=['GET', 'POST'])
 def diagnosisHistory():
     if 'logged_in' in session:
-<<<<<<< HEAD
         return render_template('diagnosisHistory.html', title='Diagnosis History', isLoggedin=True,records=records)
     else:
         return redirect(url_for('home'))
@@ -335,9 +334,6 @@ def generateReport():
             response.headers['Content-Type'] = 'application/pdf'
             response.headers['Content-Disposition'] = 'inline; filename=report.pdf'
             return response 
-=======
-        return render_template('diagnosisHistory.html', title='History', isLoggedin=True)
->>>>>>> b7f4ad7fdcb1fcc2d206232c188bd86f8b72b186
     else:
         return redirect(url_for('home'))
 
