@@ -22,17 +22,16 @@
           I read and accept the <strong>Terms of Service.</strong>
         </label>
     </div>
-    <button style="margin-top: 15px;" id="start" type="button" disabled='disabled' onclick="startDiagnosis()" class="btn btn-primary">Start Diagnosis</button>
+    <button style="margin-top: 15px;" id="start" type="button" disabled='disabled' onclick="startDiagnosis()" class="btn btn-primary">Start</button>
 </div>
 
-{{reattempt}}
 <div class="input-symptoms" style="display:none" id="input-symptoms">
     <fieldset class="form-group">
         <legend>Please provide a description of your symptoms</legend>
             <form action="/diagnosisReport" method="POST">
-            <textarea class="form-control" id="symptoms" placeholder="e.g. I have a headache..." name="Symptoms" rows=10 style="width: 100%;"></textarea>
+            <textarea class="form-control" id="symptoms" placeholder="e.g. I have a headache ..." name="Symptoms" rows=10 style="width: 100%;"></textarea>
             <br>
-            <input type="submit" id="diagnose" disabled='disabled' class="btn btn-primary" value="Diagnose">
+            <input type="submit" id="diagnose" disabled='disabled' class="btn btn-primary" value="Submit">
             </form>
     </fieldset>
 </div>

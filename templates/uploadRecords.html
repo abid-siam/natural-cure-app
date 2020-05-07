@@ -4,7 +4,8 @@
     <form method="POST" action="" enctype="multipart/form-data"> <!-- Make a request to the same page  -->
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
-            <legend style="text-align: center;" class="border bottom mb-4">Upload a document</legend>
+            <legend style="text-align: center;">Upload Document</legend>
+            <br>
             <div class="form-group">
                 {{ form.document.label() }}
                 {{ form.document(class="form-control-file") }}
@@ -31,10 +32,11 @@
         <div class="form-group">
             {{ form.submit(class="btn btn-outline-info") }}
         </div>
-        To view all of your documents go <a href="/viewRecords">here</a>
+        <br>
+        To view all of your uploaded documents go to <a href="/viewRecords">View Medical Records</a>
         <br>
         <br>
-        <small class="text-muted">The Natural Cure Application is HIPAA complaint. All medical documents and information provided by the user will be protected via encryption mechanisms. For more information on HIPAA, visit <a href="https://www.hhs.gov/hipaa/index.html">hhs.gov</a>.</small>
+        <small class="text-muted">The Natural Cure Application is HIPAA compliant. Your privacy is our top-priority. For more information on HIPAA, visit <a href="https://www.hhs.gov/hipaa/index.html">hhs.gov</a>.</small>
     </form>
 </div>
 {% endblock content %}

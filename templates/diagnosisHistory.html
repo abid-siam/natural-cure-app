@@ -1,11 +1,21 @@
 {% extends "layout.html" %}
 {% block content %}
+<<<<<<< HEAD
 <div class="data-table-history">
     <h3 style="text-align: center">Your Diagnosis History</h3>
     Select from the table below <br>
     <form method="POST" action="/generateReport">
         <button class="btn btn-primary" type="submit" style="margin-bottom: 15px; margin-top: 10px;" id="report" disabled="disabled" data-toggle="tooltip" data-placement="top" title="Select a row">Create Report</button>
         <table id="viewRecordsTable" class="table table-bordered table-sm" cellspacing="0" width="100%">
+=======
+<div class="data-table">
+    <h3 style="text-align: left">Your <i>Diagnosis & Treatment </i> History</h3>
+    {% if records %}
+    <form id="reportOnSubmit" method="POST" action="/generateReport">
+        Select from the table below <br>
+        <button class="btn btn-primary" type="submit" id="report" disabled="disabled">Create Report</button>
+        <table id="viewRecordsTable" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+>>>>>>> b7f4ad7fdcb1fcc2d206232c188bd86f8b72b186
             <thead style="font-weight: bold">
             <tr>
                 <th style="width: 10px;"></th>
@@ -85,6 +95,13 @@
         </table>
     </form>
 </div>
+<<<<<<< HEAD
+=======
+    {% else %}
+    <br>
+    <p style="font-size: 20px;"> You have no <i>Diagnosis & Treatment </i> data recorded in our system. </p>
+    {% endif %}
+>>>>>>> b7f4ad7fdcb1fcc2d206232c188bd86f8b72b186
 {% endblock content %}
 <script>
 

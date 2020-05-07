@@ -53,19 +53,6 @@
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    {{ form.sex.label(class="form-control-label") }}
-                    {% if form.sex.errors %}
-                        {{ form.sex(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.sex.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.sex(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
                     {{ form.email.label(class="form-control-label")}}
                     {% if form.email.errors %}
                         {{ form.email(class="form-control form-control-lg is-invalid")}}
