@@ -24,7 +24,7 @@
 	{% endif %}
 
 	<br><br>
-	<h3 style="margin-bottom: 20px;">Natural Treatments (for most likely illness)</h3>
+	<h3 style="margin-bottom: 20px;">Natural Treatments (for most likely illness):</h3>
 	{% if treatments %}
 		<ol>
 		    {% for result in treatments %}
@@ -41,10 +41,19 @@
 		        <br>
 		    {% endfor %}
 		</ol>
+		For further treatment options please check our <a href="/resources">Health Resources</a> page
+		<br>
 	{% else %}
 		{{blank}}
+		You may also want to check our <a href="/resources">Health Resources</a> page. If it is an emergency please
+		call your local emergency number immediately!
+		<br>
 	{% endif %}
-	
+	<br>
+	To request another Diagnosis & Treatment session please click <a href="/diagnosis">here</a>
+	<br><br>
+	To check your previous Diagnosis & Treatment sessions history please click <a href="/diagnosisHistory">here</a>
+	<br><br><br>
 </div>
 
 {% endblock content %}
