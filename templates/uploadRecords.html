@@ -7,16 +7,12 @@
             <legend style="text-align: center;">Upload Document</legend>
             <br>
             <div class="form-group">
-                {{ form.document.label(class="form-control-label")}}
+                {{ form.document.label() }}
+                {{ form.document(class="form-control-file") }}
                 {% if form.document.errors %}
-                    {{ form.document(class="form-control form-control-lg is-invalid")}}
-                    <div class="invalid-feedback">
-                        {% for error in form.document.errors %}
-                            <span> {{ error }} </span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.document(class="form-control form-control-lg")}} <!-- input field is valid -->
+                    {% for error in form.document.errors %}
+                        <span class="text-danger">{{ error }}</span></br>
+                    {% endfor %}
                 {% endif %}
             </div>
             <div class="form-group">

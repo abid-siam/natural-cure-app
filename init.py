@@ -346,9 +346,9 @@ def generateReport():
 
 @app.route("/uploadRecords", methods=['GET', 'POST'])
 def uploadRecords():
-    form = UploadDocumentForm()
-    current_user = getUser()
     if 'logged_in' in session:
+        form = UploadDocumentForm()
+        current_user = getUser()
         if form.validate_on_submit():
             filename = form.document.data.filename
             filepath = os.path.join(UPLOAD_DIR, filename)
@@ -406,9 +406,9 @@ def getFileRecords(username):
 
 @app.route("/shareRecords", methods=['GET', 'POST'])
 def shareRecords():
-    form = ShareRecordsForm()
-    current_user = getUser()
     if 'logged_in' in session:
+        form = ShareRecordsForm()
+        current_user = getUser()
         username = current_user.username
         files = getFileRecords(username)
         form.select.choices = files
@@ -441,16 +441,16 @@ def shareRecords():
             try:
                 smtp.login(user_email, user_password)
             except smtplib.SMTPAuthenticationError:
-                flash('The email or password for the sender is not valid. Please try again', 'danger')
+                flash('The email or password for the sender is not valid. Please try again.', 'danger')
                 return redirect(url_for('shareRecords'))
 
             try:
                 smtp.sendmail(user_email, receiver_address, msg.as_string())
             except smtplib.SMTPServerDisconnected:
-                flash('The Email server has disconnected unexpectedly. Please try again', 'danger')
+                flash('The Email server has disconnected unexpectedly. Please try again.', 'danger')
                 return redirect(url_for('shareRecords'))
             except smtplib.SMTPRecipientsRefused:
-                flash('The recipient refused to accept the email. Please try again', 'danger')
+                flash('The recipient refused to accept the email. Please try again.', 'danger')
                 return redirect(url_for('shareRecords'))
             
             smtp.quit()
