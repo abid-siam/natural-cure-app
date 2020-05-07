@@ -454,7 +454,7 @@ def diagnosisReport():
         strRemedy = data["remedy"]
         conn.commit()
         cursor.close()
-    return render_template('results.html', name = currUser.firstName, sex = currUser.sex, age = currAge,
+    return render_template('diagnosisResults.html', name = currUser.firstName, sex = currUser.sex, age = currAge,
      diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2], treatments = strRemedy)
 
 
