@@ -11,5 +11,5 @@ Natural Cure is a project in the field of software engineering. It requires know
 The goal of this project is to use the tools of computing and information technology to improve healthcare. Diagnostic tools incorporating machine learning can prove to be more accurate and reliable. The ethos of this project is the belief that every disease that exists on this planet has a cure for it hidden in nature or natural activities. Therefore, we want to revolutionize the field of natural medicine with the help of computer science and engineering. 
 	
 # Methods/Technology
-HTML/CSS (front-end)  
+HTML/CSS/JavaScript (front-end)  
 Python/SQL (back-end)
