@@ -29,7 +29,15 @@
                         </ul>
                     </td>
                     <td>
-                        {{ record.illness }}
+                        <ul style="list-style: none; padding-left: 0;">
+                            <li>{{ record.illness }} (Most likely)</li>
+                            {% if record.illness2 %}
+                                <li>{{ record.illness2 }} (Lesser likely)</li>
+                            {% endif %}
+                            {% if record.illness3 %}
+                                <li>{{ record.illness3 }} (Lesser likely)</li>
+                            {% endif %}
+                        </ul>
                     </td>
                     <td>
                         {% if record.none %}

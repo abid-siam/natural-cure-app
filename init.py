@@ -248,7 +248,7 @@ def diagnosisHistory():
             flash('The selected record has been removed.', 'success')
             return redirect(url_for('diagnosisHistory'))
         # fetch the records from diagnosis 
-        query = 'SELECT recordID, symptoms, illness, timestamp FROM diagnosis WHERE username=%s'
+        query = 'SELECT recordID, symptoms, illness, illness2, illness3, timestamp FROM diagnosis WHERE username=%s'
         cursor.execute(query, (username))
         records = cursor.fetchall()
         # parse data 
@@ -270,7 +270,6 @@ def diagnosisHistory():
                     record['treatments'].append(treatment)
             else: # a treatment does not exist 
                 record['none'] = True
-        print(records)
         return render_template('diagnosisHistory.html', title='Diagnosis History', isLoggedin=True, records=records)
     else:
         return redirect(url_for('home'))
@@ -289,11 +288,10 @@ def generateReport():
             ts = time.time()
             current_time = datetime.datetime.fromtimestamp(ts).strftime("%d/%m/%Y %I:%M:%S %p") # current time 
             recordIds = request.form.getlist("checked") # contains the ids of chosen records
-            print("The records chosen:", recordIds)
             chosenRecords = []
             cursor = conn.cursor()
             for recordID in recordIds:
-                query = 'SELECT symptoms, illness, timestamp FROM diagnosis WHERE recordID=%s'
+                query = 'SELECT symptoms, illness, illness2, illness3, timestamp FROM diagnosis WHERE recordID=%s'
                 cursor.execute(query, (recordID)) # will return something
                 diagnosis = cursor.fetchone()
                 symptoms = diagnosis['symptoms'] # ; separated
@@ -356,7 +354,6 @@ def viewRecords():
         cursor = conn.cursor()
         if request.method == 'POST': # delete the selected document ID
             documentID = request.form['documentID']
-            print("Attempting to delete filename id:", documentID)
             delete = 'DELETE FROM document WHERE documentID = %s'
             cursor.execute(delete, (documentID))
             conn.commit()
