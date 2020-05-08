@@ -60,15 +60,6 @@ class UpdateUserForm(FlaskForm):
                 raise ValidationError('That username is taken. Please choose a different one.')
 
 
-class ChangePassForm(FlaskForm):
-    currentPass = StringField('Current Password', validators=[DataRequired()])
-    newPassword = PasswordField('New Password', validators=[DataRequired(), Length(min=8)])
-    confirmNewPass = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('newPassword')])
-    submit = SubmitField('Confirm')
-
-class SubscribeForm(FlaskForm):
-    pass
-
 class UploadDocumentForm(FlaskForm):
     document = FileField('Select a document', validators=[FileAllowed(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'doc']), DataRequired()])
     description = TextAreaField('Description', validators=[Length(max=1024)])

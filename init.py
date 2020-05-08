@@ -7,10 +7,9 @@ from infermedica import *
 import secrets
 import pdfkit    # library to generate pdf 
 from flask import Flask
-from PIL import Image
 from flask import render_template, request, session, url_for, flash, redirect, make_response
 import hashlib
-from forms import RegistrationForm, LoginForm, ChangePassForm, UpdateUserForm, UploadDocumentForm, ShareRecordsForm
+from forms import RegistrationForm, LoginForm, UpdateUserForm, UploadDocumentForm, ShareRecordsForm
 from connection import *
 # email libraries and dependencies
 import smtplib
@@ -175,63 +174,12 @@ def login():
     return render_template('login.html', title='Login', form=form)
 
 
-@app.route("/changePassword", methods=['GET', 'POST'])
-def changePassword():
-    # should be logged in already
-    # user enters current password
-    if 'logged_in' in session:
-        form = ChangePassForm()
-        if form.validate_on_submit():
-            # get information from form
-            currentPass = form.currentPass.data
-            newPass = form.newPassword.data
-            # create cursor
-            cursor = conn.cursor()
-            # verify current password
-            username = session['username']
-            query = 'SELECT * FROM Person WHERE username = %s'
-            cursor.execute(query, (username))
-            # query must return something since the user is already logged in
-            data = cursor.fetchone()
-            password_correct = data['password']
-            if verify(currentPass, password_correct):
-
-                # passwords match, update current password
-                newPassHashed = encrypt(newPass)
-                if currentPass == newPassHashed:
-                    flash('Your new password must be different from your current password.', 'warning')
-                    return redirect(url_for('changePassword'))
-                # can now update the password to database
-                query = 'UPDATE Person SET password=%s WHERE username=%s'
-                cursor.execute(query, (newPassHashed, username))
-                conn.commit()
-                cursor.close()
-                session.clear()  # must login again
-                flash('Your password has been updated.', 'success')
-                return redirect(url_for('login'))
-            else:
-                cursor.close()
-                flash('Incorrect password. Could not change password.', 'danger')
-                return redirect(url_for('login'))
-        return render_template('changePassword', title='Change Password', form=form, isLoggedin=True)
-    return redirect(url_for('home'))
-
-
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
     if 'logged_in' in session:
         session.clear()
         flash('You have been successfully logged out.', 'success')
     return redirect(url_for('home'))
-
-
-
-@app.route("/settings")
-def settings():
-    if 'logged_in' in session:
-        render_template('settings.html', title='Settings')
-    else:
-        return redirect(url_for('home'))
 
 
 @app.route("/diagnosisHistory", methods=['GET', 'POST'])
@@ -446,21 +394,6 @@ def shareRecords():
         return redirect(url_for('home'))
 
 
-@app.route("/resources")
-def resources():
-    if 'logged_in' in session:
-        return render_template('resources.html', title='Health Resources', isLoggedin=True)
-    else:
-        return redirect(url_for('home'))
-
-
-@app.route("/account", methods=['GET', 'POST'])
-def account():
-    if 'logged_in' in session:
-        current_user = getUser()
-        return render_template('account.html', title='Account', isLoggedin=True, current_user=current_user)
-    else:
-        return redirect(url_for('home'))
     
 def calcAge(birth,today):
     return today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
@@ -528,17 +461,24 @@ def diagnosis():
         return redirect(url_for('home'))
 
 
-def save_picture(form_picture): # profile picture 
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profilePics', picture_fn)
-    output_size = (125, 125)
-    i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)
-    return picture_fn
 
+
+@app.route("/resources")
+def resources():
+    if 'logged_in' in session:
+        return render_template('resources.html', title='Health Resources', isLoggedin=True)
+    else:
+        return redirect(url_for('home'))
+
+        
+
+@app.route("/account", methods=['GET', 'POST'])
+def account():
+    if 'logged_in' in session:
+        current_user = getUser()
+        return render_template('account.html', title='Account', isLoggedin=True, current_user=current_user)
+    else:
+        return redirect(url_for('home'))
 
 @app.route("/account/edit", methods=['GET', 'POST'])
 def update():

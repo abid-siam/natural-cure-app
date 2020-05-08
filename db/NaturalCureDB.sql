@@ -47,18 +47,6 @@ CREATE TABLE IF NOT EXISTS `diagnosis`(
 );
 
 
--- row created after api returns diagnosis and treatment is chosen
-CREATE TABLE IF NOT EXISTS `condition`(
-    recordID int, -- corresponds to a diagnosis made 
-    conditionID VARCHAR(10), -- corresponds to the output condition id from the api 
-    username VARCHAR(20),
-    probability DECIMAL(9,8),
-    treatment VARCHAR(1024), -- may need to be reorganized (maybe a seperate table for treatments?)
-    PRIMARY KEY (recordID, conditionID),
-    FOREIGN KEY (recordID) REFERENCES `diagnosis`(recordID),
-    FOREIGN KEY (username) REFERENCES `user`(username)
-);
-
 -- row created after a user uploads a document 
 CREATE TABLE IF NOT EXISTS `document`(
     documentID int NOT NULL AUTO_INCREMENT,
