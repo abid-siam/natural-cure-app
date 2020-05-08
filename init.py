@@ -434,7 +434,6 @@ def viewRecords():
             delete = 'DELETE FROM document WHERE documentID = %s'
             cursor.execute(delete, (documentID))
             conn.commit()
-            flash('The selected file has been removed.', 'success')
             return redirect(url_for('viewRecords'))
         # fetch documents for the user 
         query = 'SELECT documentID, filePath, description, timestamp FROM document WHERE documentOwner = %s'
@@ -593,8 +592,7 @@ def diagnosisReport():
             strDisplay.append(treatment)   # add treatment object to strDisplay 
 
     strBlank = "No natural treatment for the above diagnosis exists in our database\
-        at this moment. Please consult your primary care physician or check our Health Resources \
-        page for further information. Thank you."
+        at this moment. Please consult your Primary Care Physician."
 
     return render_template('diagnosisResults.html', name = currUser.firstName, sex = currUser.sex, age = currAge,
      diagOne= lstIll[0], diagTwo = lstIll[1], diagThree = lstIll[2], treatments = strDisplay, blank = strBlank, isLoggedin=True)
