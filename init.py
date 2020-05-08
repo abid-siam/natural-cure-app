@@ -24,80 +24,6 @@ from email import encoders
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '71a924bd8cc5c7250a4fd7314f3d2faa'
 
-''' 
-Ignore: used for testing purposes 
-Will be replaced with data from database
-'''
-records = [
-    {
-        'timestamp' : "20/05/01 12:03:32",
-        'recordID' : 0,
-        'symptoms' : ['Severe Headaches', 'Light Sensitivity', 'Stiff Neck'],
-        'diagnoses' : [
-            {
-                'diagnosis' : 'Migraine',
-                'probability' : 0.4532
-            },
-            {
-                'diagnosis' : 'Meningitis',
-                'probability' : 0.2942
-            },
-            {
-                'diagnosis' : 'Tension-type headaches',
-                'probability' : 0.1787
-            }
-        ],
-        'treatments' : [
-            {
-                'condition': 'Migraine',
-                'treatments': "Apply peppermint oil, Massage head, Attend Yoga class"
-            },
-            {
-                'condition': 'Meningitis',
-                'treatments': "Haemophilus influenzae type b (Hib) vaccine"
-            },
-            {
-                'condition': 'Tension-type headaches',
-                'treatments': "Cognitive behavioral therapy, Cold compress, Drink water"
-            },
-        ]
-    },
-    {
-        'timestamp' : "20/05/06 01:03:32",
-        'recordID' : 1,
-        'symptoms' : ['Severe Headaches', 'Light Sensitivity', 'Stiff Neck'],
-        'diagnoses' : [
-            {
-                'diagnosis' : 'Migraine',
-                'probability' : 0.4532
-            },
-            {
-                'diagnosis' : 'Meningitis',
-                'probability' : 0.2942
-            },
-            {
-                'diagnosis' : 'Tension-type headaches',
-                'probability' : 0.1787
-            }
-        ],
-        'treatments' : [
-            {
-                'condition': 'Migraine',
-                'treatments': "Apply peppermint oil, Massage head, Attend Yoga class"
-            },
-            {
-                'condition': 'Meningitis',
-                'treatments': "Haemophilus influenzae type b (Hib) vaccine"
-            },
-            {
-                'condition': 'Tension-type headaches',
-                'treatments': "Cognitive behavioral therapy, Cold compress, Drink water"
-            },
-        ]
-    },
-]
-
-
 UPLOAD_DIR = os.path.join(os.getcwd(), "static/uploads")
 #==========================================================================
 # Encrypt the password field to a 64 bit hexadecimal
@@ -311,7 +237,41 @@ def settings():
 @app.route("/diagnosisHistory", methods=['GET', 'POST'])
 def diagnosisHistory():
     if 'logged_in' in session:
-        return render_template('diagnosisHistory.html', title='Diagnosis History', isLoggedin=True,records=records)
+        current_user = getUser()
+        username = current_user.username
+        cursor = conn.cursor()
+        if request.method == 'POST': # delete the selected recordID
+            recordID = request.form['recordID']
+            delete = 'DELETE FROM diagnosis WHERE recordID = %s'
+            cursor.execute(delete, (recordID))
+            conn.commit()
+            flash('The selected record has been removed.', 'success')
+            return redirect(url_for('diagnosisHistory'))
+        # fetch the records from diagnosis 
+        query = 'SELECT recordID, symptoms, illness, timestamp FROM diagnosis WHERE username=%s'
+        cursor.execute(query, (username))
+        records = cursor.fetchall()
+        # parse data 
+        for record in records: # each record is a row {}
+            symptoms = record['symptoms'] # ; separated
+            record['symptoms'] = symptoms.split(';')
+            query = 'SELECT remedy FROM treatment WHERE illness=%s'
+            cursor.execute(query, (record['illness']))
+            data = cursor.fetchone()
+            if (data): # a treatment exists 
+                record['treatments'] = []
+                treatments = data['remedy'].split(';')
+                for result in treatments:
+                    treatment = {}
+                    resultSplit = result.split(':')
+                    treatment['treatment'] = resultSplit[0]
+                    if len(resultSplit) == 2:
+                        treatment['options'] = resultSplit[1].split(',')
+                    record['treatments'].append(treatment)
+            else: # a treatment does not exist 
+                record['none'] = True
+        print(records)
+        return render_template('diagnosisHistory.html', title='Diagnosis History', isLoggedin=True, records=records)
     else:
         return redirect(url_for('home'))
 
@@ -328,12 +288,33 @@ def generateReport():
             user['sex'] = current_user.sex
             ts = time.time()
             current_time = datetime.datetime.fromtimestamp(ts).strftime("%d/%m/%Y %I:%M:%S %p") # current time 
-            recordIds = request.form.getlist("checked")
+            recordIds = request.form.getlist("checked") # contains the ids of chosen records
             print("The records chosen:", recordIds)
             chosenRecords = []
-            for record in records:
-                if str(record['recordID']) in recordIds:
-                    chosenRecords.append(record)
+            cursor = conn.cursor()
+            for recordID in recordIds:
+                query = 'SELECT symptoms, illness, timestamp FROM diagnosis WHERE recordID=%s'
+                cursor.execute(query, (recordID)) # will return something
+                diagnosis = cursor.fetchone()
+                symptoms = diagnosis['symptoms'] # ; separated
+                diagnosis['symptoms'] = symptoms.split(';')
+                query2 = 'SELECT remedy FROM treatment WHERE illness=%s'
+                cursor.execute(query2, (diagnosis['illness']))
+                data = cursor.fetchone()
+                if (data): # a treatment exists 
+                    diagnosis['treatments'] = []
+                    treatments = data['remedy'].split(';')
+                    for result in treatments:
+                        treatment = {}
+                        resultSplit = result.split(':')
+                        treatment['treatment'] = resultSplit[0]
+                        if len(resultSplit) == 2:
+                            treatment['options'] = resultSplit[1].split(',')
+                        diagnosis['treatments'].append(treatment)
+                else: # a treatment does not exist 
+                    diagnosis['none'] = True
+                chosenRecords.append(diagnosis)
+
             total = len(chosenRecords)
             rendered = render_template('reportTemplate.html', records=chosenRecords, current_time=current_time, total=total, user=user)
             pdf = pdfkit.from_string(rendered, False)
@@ -493,8 +474,7 @@ def stringFromSympt(sympt):
         if i == (len(sympt)-1):
             returnStr += str(sympt[i])
         else:
-            returnStr = returnStr + str(sympt[i]) + ", "
-            returnStr += " "
+            returnStr = returnStr + str(sympt[i]) + ';'
     return returnStr
 
 #Displays the results of the diagnosis

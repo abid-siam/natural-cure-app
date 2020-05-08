@@ -33,7 +33,7 @@
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
               <a class="nav-item nav-link" href="/">Home</a>
-              <a class="nav-item nav-link" href="/diagnosis">Diagnosis & Treatment </a>
+              <a class="nav-item nav-link" href="/diagnosis">Diagnosis & Treatment</a>
             </div>
             <div class="navbar-nav">
               {% if isLoggedin %}
@@ -125,12 +125,15 @@
               'documentID' : documentID
           });
       }
-      function deleteRowRecord(btn, documentID) {
+      function deleteRowRecord(btn, recordID) {
           var row = btn.parentNode.parentNode;
           row.parentNode.removeChild(row);
           $.post("/diagnosisHistory", {
-              'recordID' : documentID
+              'recordID' : recordID
           });
+      }
+      function generateReport() {
+
       }
       var dropdown = document.getElementsByClassName("dropdown-btn");
       var i; 
