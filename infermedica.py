@@ -44,7 +44,7 @@ def conditions(request):
 #def main():
     #api= infermedica_api.API(app_id='52457f85', app_key='95f03f5398a3b0358795540117d4f376')
     #user answers question
-    #request = diagnose(api,("female","35"),parser(api,'i feel stomach pain but no couoghing today'))
+    #request = diagnose(api,("female","35"),parser(api,'i feel stomach pain but no coughing today'))
     
 
     
