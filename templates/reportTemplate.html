@@ -1,52 +1,68 @@
-<body style = "font-family:Arial, Helvetica, sans-serif">
-    <h1>
-        Diagnosis & Treatment Report for {{user.firstName}} {{user.lastName}}
-    </h1>
-    <p>Record Generated: {{current_time}}</p>
-    <h4><u>User Information</u></h4>
-        <ul>
-            <li>
-                Sex: {{user.sex}}
-            </li>
-            <li>
-                Age: {{user.age}} years old
-            </li>
-        </ul>
-    <p>__________________________________________________________________________________________________</p>
-    {% for record in records %}
-        <strong>Record {{loop.index}} of {{total}}</strong>
-        <br>
-        <p>Issued: {{record.timestamp}}</p>
-        <h4><u>Symptoms recorded</u></h4>
-        <ul>
-            {% for symptom in record.symptoms %}
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body style = "font-family:Arial, Helvetica, sans-serif">
+        <h1>
+            Diagnosis & Treatment Report for {{user.firstName}} {{user.lastName}}
+        </h1>
+        <p>Record Generated: {{current_time}}</p>
+        <h4><u>User Information</u></h4>
+            <ul>
                 <li>
-                    {{symptom}}
+                    Sex: {{user.sex}}
                 </li>
-            {% endfor %}
-        </ul>
-        <h4><u>Diagnosis</u></h4>
-        <p>The following diagnosis was made via a trusted third party API, Infermedica.</p>
-        <p>Most likely: <b>{{ record.illness }}</b></p>
-        
-        <h4><u>Treatment and Further Prevention (for most likely illness)</u></h4>
-        <p>The following treatment options are alternatives to prescription drugs</p>
-        <p>Please speak with your medical professional to make further decisions</p>
-        
-        <ol>
-            {% for result in record.treatments %}
                 <li>
-                    {{ result.treatment }}
+                    Age: {{user.age}} years old
                 </li>
-                <ul>
-                    {% for option in result.options %}
-                        <li>
-                            {{option}}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endfor %}
-        </ol>
+            </ul>
         <p>__________________________________________________________________________________________________</p>
-    {% endfor %}
-</body>
+        {% for record in records %}
+            <strong>Record {{loop.index}} of {{total}}</strong>
+            <br>
+            <p>Issued: {{record.timestamp}}</p>
+            <h4><u>Symptoms recorded</u></h4>
+            <ul>
+                {% for symptom in record.symptoms %}
+                    <li>
+                        {{symptom}}
+                    </li>
+                {% endfor %}
+            </ul>
+            <h4><u>Diagnosis</u></h4>
+            <p>The following diagnosis was made via a trusted third party API, Infermedica.</p>
+            <p>Most likely: <b>{{ record.illness }}</b></p>
+            {% if record.illness2 %}
+                <p>Lesser likely: <b>{{ record.illness2 }}</b></p>
+            {% endif %}
+            {% if record.illness3 %}
+                <p>Lesser likely: <b>{{ record.illness3 }}</b></p>
+            {% endif %}
+            
+            {% if record.none %}
+            <p>No natural treatment for the above diagnosis exists in our database at this moment. Please consult your Primary Care Physician.</p>
+            <b>If it is an emergency please go to your nearest hospital or call your local emergency number immediately!</b>
+            {% else %}
+                <h4><u>Treatment and Further Prevention (for most likely illness)</u></h4>
+                <p>The following treatment options are alternatives to prescription drugs</p>
+                <p>Please speak with your medical professional to make further decisions</p>
+                
+                <ol>
+                    {% for result in record.treatments %}
+                        <li>
+                            {{ result.treatment }}
+                        </li>
+                        <ul>
+                            {% for option in result.options %}
+                                <li>
+                                    {{option}}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endfor %}
+                </ol>
+            {% endif %}
+            <p>__________________________________________________________________________________________________</p>
+        {% endfor %}
+    </body>
+</html>
