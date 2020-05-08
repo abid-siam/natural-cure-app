@@ -474,8 +474,7 @@ def stringFromSympt(sympt):
         if i == (len(sympt)-1):
             returnStr += str(sympt[i])
         else:
-            returnStr = returnStr + str(sympt[i]) + ", "
-            returnStr += " "
+            returnStr = returnStr + str(sympt[i]) + ';'
     return returnStr
 
 #Displays the results of the diagnosis
