@@ -66,7 +66,7 @@ class UploadDocumentForm(FlaskForm):
     submit = SubmitField('Upload')
 
 class ShareRecordsForm(FlaskForm):
-    recipient = EmailField('Recipient Email Address', validators=[DataRequired(), Email()])
+    recipient = EmailField('Receiver Email Address', validators=[DataRequired(), Email()])
     user_email = EmailField('Sender Email Address', validators=[DataRequired(), Email()])
     user_password = PasswordField('Sender Email Password', validators=[DataRequired()])
     subject = StringField('Subject', validators=[Length(max=78)])
